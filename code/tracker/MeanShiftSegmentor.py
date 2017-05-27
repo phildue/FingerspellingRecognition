@@ -8,12 +8,12 @@ def mean_shift_segmentation(image, kernel_size=3, bandwidth=16, max_iterations=1
     segmentor = MeanShiftSegmentor(image, kernel_size, bandwidth)
 
     for i in range(0, max_iterations):
-        limits = image.shape
+        limits = segmentor.image.shape
         image_prev = segmentor.image
-        for x in range(0, limits[0]):
-            for y in range(0, limits[1]):
+        for x in range(segmentor.kernel_dist, limits[0]+segmentor.kernel_dist):
+            for y in range(segmentor.kernel_dist, limits[1]+segmentor.kernel_dist):
                 window = segmentor.neighbours([x, y])
-                segmentor.image[x + segmentor.kernel_dist, y + segmentor.kernel_dist] = segmentor.weighted_sum(window)
+                segmentor.image[x, y] = segmentor.weighted_sum(window)
 
         if linalg.norm(image_prev - segmentor.image) < 0.0000001:
             break
@@ -31,8 +31,7 @@ class MeanShiftSegmentor(object):
 
         self.kernel_dist = int(floor(float(kernel_size) / 2))
         self.image = self.__border_padding(image)
-        cv2.imshow('image', self.image)
-        cv2.waitKey(0)
+        self.image = cv2.normalize(self.image.astype('float'), None, 0.0, 1.0, cv2.NORM_MINMAX)
         self.kernel_size = kernel_size
         self.kernel = self.__create_kernel(kernel_size, bandwidth)
 

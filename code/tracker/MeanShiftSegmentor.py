@@ -65,17 +65,9 @@ class MeanShiftSegmentor(object):
         return exp(-0.5 * (distance / bandwidth) ** 2)
 
     def __border_padding(self, image):
-        limits = image.shape
-        image_padded = zeros(shape=(limits[0] + self.kernel_dist * 2, limits[1] + self.kernel_dist * 2, 3))
-        image_padded[self.kernel_dist:limits[0] + self.kernel_dist, self.kernel_dist:limits[1] + self.kernel_dist,
-        :] = image[:, :, :]
-        #image_padded = image_padded.astype(int)
-        for i in range(0, self.kernel_dist):
-            image_padded[i, :, :] = image_padded[self.kernel_dist, :, :]
-            image_padded[limits[0] + i, :, :] = image_padded[limits[0], :, :]
-            image_padded[:, i, :] = image_padded[:, self.kernel_dist, :]
-            image_padded[:, limits[1] + i, :] = image_padded[:, limits[1], :]
-        return image_padded
+        return cv2.copyMakeBorder(image, top=self.kernel_dist, bottom=self.kernel_dist, left=self.kernel_dist,
+                                  right=self.kernel_dist,
+                                  borderType=cv2.BORDER_REPLICATE)
 
     def remove_padding(self, image):
         return image[self.kernel_dist:image.shape[0] - self.kernel_dist,

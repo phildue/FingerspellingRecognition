@@ -11,7 +11,7 @@ def main():
     img = cv2.imread(dir_rsrc + dir_rsrc + dir_a + test_a, 1)
     cv2.imshow('image', img)
     cv2.waitKey(500)
-    img = mean_shift_segmentation(img)
+    #img = mean_shift_segmentation(img)
     cv2.imshow('image', img)
     cv2.waitKey(0)
     cv2.destroyAllWindows()

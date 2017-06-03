@@ -1,7 +1,7 @@
 from sklearn.model_selection import train_test_split
 
 
-def hold_out_eval(classifer, data, labels):
+def hold_out_eval(classifier, data, labels):
     data_train, data_test, labels_train, labels_test = train_test_split(data, labels, test_size=0.33, random_state=42)
 
     classifier.train(data_train, labels_train)

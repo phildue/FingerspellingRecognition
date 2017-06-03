@@ -36,4 +36,4 @@ def main():
     print(labels)
 
 
-main()
+#main()

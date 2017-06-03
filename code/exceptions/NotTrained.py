@@ -1,0 +1,2 @@
+class NotTrained(Exception):
+    pass

@@ -1,5 +1,5 @@
 from classification.ClassifierClass import Classifier
-from evaluation.hold_out import hold_out_eval
+from evaluation.HoldOut import hold_out_eval
 from feature_generation.DataGenerator import gendata
 from feature_generation.FeatureExtraction import pca_transform
 

@@ -5,12 +5,15 @@ import cv2
 import numpy as np
 
 
-def gendata(dir_dataset, sample_size):
-    sets = ["A", "B", "C", "D", "E"]
-    alphabet = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v",
-                "w", "x", "y"]
+def gendata(dir_dataset, sample_size, alphabet=None, sets=None):
+    if sets is None:
+        sets = ["A", "B", "C", "D", "E"]
+    if alphabet is None:
+        alphabet = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u",
+                    "v", "w", "x", "y"]
+
     n_letters = len(alphabet)
-    im_res = (100, 120, 3)
+    im_res = (100, 120, 1)
     dim = im_res[0] * im_res[1] * im_res[2]
     data = np.zeros(shape=(sample_size * n_letters, dim))
     labels = np.zeros(shape=(sample_size * n_letters, 1))
@@ -23,7 +26,7 @@ def gendata(dir_dataset, sample_size):
                 paths.append(dir_dataset + dir_set + "/" + dir_letter + "/" + fname)
 
         for sel_samples, path in enumerate(random.sample(paths, sample_size)):
-            img = cv2.imread(path, 1)
+            img = cv2.imread(path, 0)
             img = cv2.resize(img, (im_res[0], im_res[1]))
             index = sel_samples + (class_ - 1) * sample_size
             data[index, :] = img.reshape(1, dim)

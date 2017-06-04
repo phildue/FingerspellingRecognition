@@ -10,4 +10,4 @@ def hold_out_eval(classifier, data, labels):
     for i, label_predict in enumerate(labels_predict):
         if label_predict != labels_test[i]:
             error += 1
-    error /= len(data_test)
+    return error / len(data_test)

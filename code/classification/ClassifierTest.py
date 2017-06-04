@@ -7,7 +7,7 @@ from feature_generation.FeatureExtraction import pca_transform
 
 def main():
     dir_dataset = '../../resource/dataset/fingerspelling5/dataset5/A/'
-    n_data = 100
+    n_data = 5
     data, labels = gendata(dir_dataset, n_data)
     #data = get_dissim_rep(data)
     data = pca_transform(data)

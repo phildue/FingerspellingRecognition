@@ -11,13 +11,13 @@ def filter_skin(image):
 
     # apply a series of erosions and dilations to the mask
     # using an elliptical kernel
-    kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (11, 11))
-    skin_mask = cv2.erode(skin_mask, kernel, iterations=2)
-    skin_mask = cv2.dilate(skin_mask, kernel, iterations=2)
+    kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (1, 1))
+    skin_mask = cv2.erode(skin_mask, kernel, iterations=1)
+    skin_mask = cv2.dilate(skin_mask, kernel, iterations=1)
 
     # blur the mask to help remove noise, then apply the
     # mask to the frame
-    skin_mask = cv2.GaussianBlur(skin_mask, (3, 3), 0)
+    skin_mask = cv2.GaussianBlur(skin_mask, (3, 3), 2)
     skin = cv2.bitwise_and(image, image, mask=skin_mask)
 
     return skin

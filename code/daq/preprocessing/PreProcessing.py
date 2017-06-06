@@ -4,7 +4,13 @@ import numpy as np
 
 def pre_processing(img, im_size=(100, 120)):
     img_preprocessed = cv2.resize(img, (im_size[0], im_size[1]))
+    img_preprocessed = cv2.pyrMeanShiftFiltering(img_preprocessed, 25, 25)
     img_preprocessed = filter_skin(img_preprocessed)
+    img_preprocessed = cv2.cvtColor(img_preprocessed, cv2.COLOR_RGB2GRAY)
+    img_preprocessed = cv2.blur(img_preprocessed, (7, 7))
+    img_preprocessed = cv2.Canny(img_preprocessed, threshold1=50, threshold2=100)
+    _, img_preprocessed = cv2.threshold(img_preprocessed, 50, 255, cv2.THRESH_BINARY)
+    # TODO findContours/remove blobs/ calculate distance to centroid for each point on the contour
     return img_preprocessed
 
 

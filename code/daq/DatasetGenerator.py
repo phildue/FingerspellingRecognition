@@ -4,11 +4,11 @@ import random
 import cv2
 import numpy as np
 
-from daq.preprocessing.PreProcessing import PreProcessor
+from daq.preprocessing.PreProcessing import PreProcessor, pre_processing
 from daq.preprocessing.SkinSegmentor import filter_skin
 
 
-def gendata(dir_dataset, sample_size=2500, alphabet=None, sets=None):
+def gendata(dir_dataset, sample_size=2500, alphabet=None, sets=None, im_size=(100, 120, 3)):
     if sets is None:
         sets = ["A", "B", "C", "D", "E"]
     if alphabet is None:
@@ -16,11 +16,9 @@ def gendata(dir_dataset, sample_size=2500, alphabet=None, sets=None):
                     "v", "w", "x", "y"]
 
     n_letters = len(alphabet)
-    im_res = (100, 120, 3)
-    dim = im_res[0] * im_res[1]
+    dim = im_size[0] * im_size[1]
     data = np.zeros(shape=(sample_size * n_letters, dim), dtype=np.uint8)
     labels = np.zeros(shape=(sample_size * n_letters, 1), dtype=np.uint8)
-    pre_processor = PreProcessor(im_res)
 
     for class_, dir_letter in enumerate(alphabet, 1):
         paths = []
@@ -37,7 +35,7 @@ def gendata(dir_dataset, sample_size=2500, alphabet=None, sets=None):
 
         for sel_samples, path in enumerate(path_sel):
             img = cv2.imread(path, 1)
-            img = pre_processor.apply_pp(img)
+            img = pre_processing(img, im_size)
             index = sel_samples + (class_ - 1) * sample_size
             data[index, :] = img.reshape(1, dim)
             labels[index] = class_

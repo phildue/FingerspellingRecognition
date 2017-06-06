@@ -1,5 +1,5 @@
 from classification.ClassifierClass import Classifier
-from daq.DataGenerator import gendata
+from daq.DatasetGenerator import gendata
 from evaluation.HoldOut import hold_out_eval
 from representation.FeatureExtraction import pca_transform
 

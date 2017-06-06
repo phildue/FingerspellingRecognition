@@ -1,11 +1,10 @@
 import os
 import random
 
-import cv2
 import numpy as np
 
-from daq.preprocessing.PreProcessing import PreProcessor, pre_processing
-from daq.preprocessing.SkinSegmentor import filter_skin
+from daq.ImReader import read_im_file
+from daq.preprocessing.PreProcessing import pre_processing
 
 
 def gendata(dir_dataset, sample_size=2500, alphabet=None, sets=None, im_size=(100, 120, 3)):
@@ -16,7 +15,7 @@ def gendata(dir_dataset, sample_size=2500, alphabet=None, sets=None, im_size=(10
                     "v", "w", "x", "y"]
 
     n_letters = len(alphabet)
-    dim = im_size[0] * im_size[1]
+    dim = im_size[0] * im_size[1] * im_size[2]
     data = np.zeros(shape=(sample_size * n_letters, dim), dtype=np.uint8)
     labels = np.zeros(shape=(sample_size * n_letters, 1), dtype=np.uint8)
 
@@ -34,7 +33,7 @@ def gendata(dir_dataset, sample_size=2500, alphabet=None, sets=None, im_size=(10
             print("Too many samples requested for " + dir_letter + ", taking all: " + str(len(path_sel)))
 
         for sel_samples, path in enumerate(path_sel):
-            img = cv2.imread(path, 1)
+            img = read_im_file(path)
             img = pre_processing(img, im_size)
             index = sel_samples + (class_ - 1) * sample_size
             data[index, :] = img.reshape(1, dim)

@@ -8,6 +8,7 @@ def filter_skin(image):
     upper = np.array([20, 255, 255], dtype="uint8")
     converted = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
     skin_mask = cv2.inRange(converted, lower, upper)
+    skin_mask = cv2.GaussianBlur(skin_mask, (3, 3), 2)
 
     # apply a series of erosions and dilations to the mask
     # using an elliptical kernel

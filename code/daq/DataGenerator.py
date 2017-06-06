@@ -4,7 +4,8 @@ import random
 import cv2
 import numpy as np
 
-from preprocessing.SkinSegmentor import filter_skin
+from daq.preprocessing.PreProcessing import PreProcessor
+from daq.preprocessing.SkinSegmentor import filter_skin
 
 
 def gendata(dir_dataset, sample_size=2500, alphabet=None, sets=None):
@@ -19,6 +20,7 @@ def gendata(dir_dataset, sample_size=2500, alphabet=None, sets=None):
     dim = im_res[0] * im_res[1]
     data = np.zeros(shape=(sample_size * n_letters, dim), dtype=np.uint8)
     labels = np.zeros(shape=(sample_size * n_letters, 1), dtype=np.uint8)
+    pre_processor = PreProcessor(im_res)
 
     for class_, dir_letter in enumerate(alphabet, 1):
         paths = []
@@ -35,10 +37,7 @@ def gendata(dir_dataset, sample_size=2500, alphabet=None, sets=None):
 
         for sel_samples, path in enumerate(path_sel):
             img = cv2.imread(path, 1)
-            img = cv2.resize(img, (im_res[0], im_res[1]))
-            img = filter_skin(img)
-            img = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
-
+            img = pre_processor.apply_pp(img)
             index = sel_samples + (class_ - 1) * sample_size
             data[index, :] = img.reshape(1, dim)
             labels[index] = class_

@@ -1,8 +1,7 @@
 from classification.ClassifierClass import Classifier
+from daq.DataGenerator import gendata
 from evaluation.HoldOut import hold_out_eval
-from featuregeneration.DataGenerator import gendata
-from featuregeneration.DissimilarityRep import get_dissim_rep
-from featuregeneration.FeatureExtraction import pca_transform
+from representation.FeatureExtraction import pca_transform
 
 
 def main():

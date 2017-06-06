@@ -16,7 +16,7 @@ def gendata(dir_dataset, sample_size=2500, alphabet=None, sets=None):
 
     n_letters = len(alphabet)
     im_res = (100, 120, 3)
-    dim = im_res[0] * im_res[1] * im_res[2]
+    dim = im_res[0] * im_res[1]
     data = np.zeros(shape=(sample_size * n_letters, dim), dtype=np.uint8)
     labels = np.zeros(shape=(sample_size * n_letters, 1), dtype=np.uint8)
 
@@ -37,6 +37,7 @@ def gendata(dir_dataset, sample_size=2500, alphabet=None, sets=None):
             img = cv2.imread(path, 1)
             img = cv2.resize(img, (im_res[0], im_res[1]))
             img = filter_skin(img)
+            img = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
 
             index = sel_samples + (class_ - 1) * sample_size
             data[index, :] = img.reshape(1, dim)

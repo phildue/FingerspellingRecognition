@@ -15,8 +15,10 @@ def main():
     # cv2.imshow('image', img)
     # cv2.waitKey(0)
     skin = filter_skin(img)
+    skin = cv2.cvtColor(skin, cv2.COLOR_RGB2GRAY)
     # show the skin in the image along with the mask
-    cv2.imshow("detected skin", np.hstack([img, skin]))
+    # cv2.imshow("detected skin", np.hstack([img, skin]))
+    cv2.imshow("skin binary ", skin)
     cv2.waitKey(10000)
     cv2.destroyAllWindows()
 

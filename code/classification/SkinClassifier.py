@@ -1,4 +1,5 @@
-from __builtin__ import file
+import os
+
 from sklearn.externals import joblib
 from sklearn.neighbors import KNeighborsClassifier
 
@@ -11,8 +12,10 @@ class SkinClassifier:
     trained = False
 
     def __init__(self, trainedc_path='trained_skin_classifier.pkl'):
-        if file.exists(trainedc_path):
+
+        if os.path.exists(trainedc_path):
             self.scikit_object = joblib.load(trainedc_path)
+            self.trained = True
         else:
             data, labels = gendata_skin()
             self.train(data, labels)

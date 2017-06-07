@@ -1,8 +1,7 @@
 import cv2
 
 # from tracker.MeanShiftSegmentor import mean_shift_segmentation
-from daq.DatasetGenerator import gendata_sign
-from daq.ImReader import read_im_file
+from daq.datageneration.DatasetGeneratorSign import gendata_sign
 from daq.preprocessing.PreProcessing import pre_processing
 
 

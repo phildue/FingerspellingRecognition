@@ -1,6 +1,6 @@
 from classification.SignClassifier import SignClassifier
 from classification.SkinClassifier import SkinClassifier
-from daq.DatasetGenerator import gendata_sign, gendata_skin
+from daq.datageneration.DatasetGeneratorSign import gendata_sign, gendata_skin
 from evaluation.HoldOut import hold_out_eval
 from representation.FeatureExtraction import pca_transform
 

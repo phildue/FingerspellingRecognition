@@ -1,27 +1,21 @@
 import cv2
 import numpy as np
 
+from classification.SkinClassifier import SkinClassifier
+
 
 def pre_processing(img, im_size=(100, 120)):
     img_resized = cv2.resize(img, (im_size[0], im_size[1]))
     cv2.imshow('image', img_resized)
     cv2.waitKey(10000)
-    img_preprocessed = cv2.blur(img_resized, (7, 7))
+    img_preprocessed = detect_skin(img_resized)
     cv2.imshow('image', img_preprocessed)
     cv2.waitKey(10000)
-    img_preprocessed = cv2.pyrMeanShiftFiltering(img_preprocessed, 30, 30)
-    cv2.imshow('image', img_preprocessed)
-    cv2.waitKey(10000)
-    img_preprocessed = filter_skin(img_preprocessed)
-    cv2.imshow('image', img_preprocessed)
-    cv2.waitKey(10000)
-    img_preprocessed = cv2.cvtColor(img_preprocessed, cv2.COLOR_RGB2GRAY)
+    _, img_preprocessed = cv2.threshold(img_preprocessed, 1, 255, cv2.THRESH_BINARY)
     cv2.imshow('image', img_preprocessed)
     cv2.waitKey(10000)
     img_preprocessed = cv2.Canny(img_preprocessed, threshold1=50, threshold2=100)
-    _, img_preprocessed = cv2.threshold(img_preprocessed, 10, 255, cv2.THRESH_BINARY)
-    cv2.imshow('image', img_preprocessed)
-    cv2.waitKey(10000)
+
     _, contours, hierarchy = cv2.findContours(img_preprocessed, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
     lens = []
     for c in contours: lens.append(len(c))
@@ -32,6 +26,16 @@ def pre_processing(img, im_size=(100, 120)):
     # TODO findContours/remove blobs/ calculate distance to centroid for each point on the contour
 
     return img_preprocessed
+
+
+def detect_skin(image):
+    # TODO train once and store
+    clf = SkinClassifier()
+    new_image = image
+    for i, line in enumerate(image):
+        for j, pixel in enumerate(line):
+            new_image[i, j] = clf.predict(pixel.reshape(1, -1))
+    return new_image
 
 
 def filter_skin(image, lower_thresh=np.array([0, 40, 40], dtype="uint8"),

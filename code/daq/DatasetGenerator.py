@@ -7,7 +7,24 @@ from daq.ImReader import read_im_file
 from daq.preprocessing.PreProcessing import pre_processing
 
 
-def gendata(dir_dataset, sample_size=2500, alphabet=None, sets=None, im_size=(100, 120, 3)):
+def gendata_skin(path_dataset='../../resource/dataset/skin/Skin_NonSkin.txt',
+                 sample_size=245000):
+    data = np.zeros(shape=(sample_size, 3))
+    labels = np.zeros(shape=(sample_size, 1))
+
+    with open(path_dataset) as f:
+        for n, line in enumerate(f):
+            if n >= sample_size:
+                break
+            elements = line.split()
+            data[n, :] = np.array(list(map(int, elements[0:3])))
+            labels[n, 0] = np.array(list(map(int, elements[3])))
+
+    return data[1:sample_size, :], labels[1:sample_size, :]
+
+
+def gendata_sign(dir_dataset='../../resource/dataset/fingerspelling5/dataset5/',
+                 sample_size=2500, alphabet=None, sets=None, im_size=(100, 120, 3)):
     if sets is None:
         sets = ["A", "B", "C", "D", "E"]
     if alphabet is None:
@@ -39,16 +56,16 @@ def gendata(dir_dataset, sample_size=2500, alphabet=None, sets=None, im_size=(10
             data[index, :] = img.reshape(1, dim)
             labels[index] = class_
 
-    return data, labels
+    return data[1:sample_size, :], labels[1:sample_size, :]
 
 
-def main():
+def demo():
     dir_dataset = '../../resource/dataset/fingerspelling5/dataset5/'
     n_data = 10
-    data, labels = gendata(dir_dataset, n_data)
+    data, labels = gendata_sign(dir_dataset, n_data)
     print("Data:\n")
     print(data)
     print("Labels:\n")
     print(labels)
 
-# main()
+# demo()

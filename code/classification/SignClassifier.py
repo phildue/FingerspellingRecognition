@@ -1,15 +1,12 @@
-from sklearn import svm
+from sklearn.svm import SVC
 
 from exceptions.NotTrained import NotTrained
 
 
-class Classifier:
+class SignClassifier:
 
-    scikit_object = svm.SVC()
+    scikit_object = SVC()
     trained = False
-
-    def __init__(self):
-        self.scikit_object = svm.SVC()
 
     def train(self, data, labels):
         self.scikit_object.fit(data, labels.ravel())

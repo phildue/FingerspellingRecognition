@@ -11,7 +11,7 @@ def preprocess(imgs, roi_size=(30, 30)):
         try:
             imgs_preprocessed.append(preprocess_img(img, roi_size))
         except NoRoiFound:
-            error +=1
+            error += 1
 
     if error > 0:
         print("Could not find region of interest in " + str(error) + " images")

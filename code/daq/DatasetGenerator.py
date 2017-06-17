@@ -45,12 +45,12 @@ def vectorize(img_lists, dim, sample_size):
     n_letters = len(img_lists)
     data = np.zeros(shape=(sample_size * n_letters, dim), dtype=np.uint8)
     labels = np.zeros(shape=(sample_size * n_letters, 1), dtype=np.uint8)
-    for class_, letter in enumerate(img_lists.keys(), 1):
+    for class_, letter in enumerate(sorted(img_lists.keys()), 1):
         for n, image in enumerate(img_lists[letter]):
             index = n + (class_ - 1) * sample_size
             data[index, :] = image.reshape(1, dim)
             labels[index] = class_
-    return data[1:sample_size, :], labels[1:sample_size, :]
+    return data, labels
 
 
 def demo():

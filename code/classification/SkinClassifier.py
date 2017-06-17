@@ -1,6 +1,6 @@
 from sklearn.neighbors import KNeighborsClassifier
 
-from exceptions.NotTrained import NotTrained
+from exceptions.exceptions import NotTrained
 
 
 class SkinClassifier:

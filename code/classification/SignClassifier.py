@@ -1,6 +1,6 @@
 from sklearn.svm import SVC
 
-from exceptions.NotTrained import NotTrained
+from exceptions.exceptions import NotTrained
 
 
 class SignClassifier:

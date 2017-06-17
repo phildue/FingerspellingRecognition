@@ -1,14 +1,17 @@
 from classification.SignClassifier import SignClassifier
 from classification.SkinClassifier import SkinClassifier
 from daq.DatasetGenerator import gendata_sign, gendata_skin
+from daq.ImReader import get_paths_tm
 from evaluation.HoldOut import hold_out_eval
 from representation.FeatureExtraction import pca_transform
 
+
 def SignClassifierTest():
     dir_dataset = '../../resource/dataset/fingerspelling5/dataset5/'
-    n_data = 10
-#    data, labels = gendata(dir_dataset, n_data, alphabet=["a", "b"])
-    data, labels = gendata_sign(dir_dataset, n_data, sets=["E"])
+    n_data = 50
+    #    data, labels = gendata(dir_dataset, n_data, alphabet=["a", "b"])
+    data, labels = gendata_sign(get_paths_tm(dir_dataset='../../resource/dataset/tm'
+                                             ), n_data)
 
     data = pca_transform(data)
     # data = get_dissim_rep(data)
@@ -19,7 +22,6 @@ def SignClassifierTest():
 
 
 def SkinClassifierTest():
-
     data, labels = gendata_skin()
 
     error = hold_out_eval(SkinClassifier(), data, labels)
@@ -27,5 +29,5 @@ def SkinClassifierTest():
     print("Error: " + str(error))
 
 
-# SignClassifierTest()
-SkinClassifierTest()
+SignClassifierTest()
+# SkinClassifierTest()

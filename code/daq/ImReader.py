@@ -11,19 +11,21 @@ def read_image(path):
         if img is None:
             raise FileNotFoundError("Couldn't find: " + path)
     except Exception:
-        print("Exception on reading file :" + path)
+        print("Exception on reading file :" + str(path))
 
     return img
 
 
 def read_letters(img_file_paths, sample_size, letters):
-    random.shuffle(letters)
+    letters_random_order = letters.copy()
+    random.shuffle(letters_random_order)
     letter_imgs = {}
-    for class_, letter in enumerate(letters, 1):
+    for letter in letters_random_order:
         letter_imgs[letter] = []
         try:
             path_sel = random.sample(img_file_paths[letter], sample_size)
         except ValueError:
+            path_sel = img_file_paths[letter]
             print("Too many samples requested for [" + letter + "], taking all: " + str(len(path_sel)))
 
         for sel_samples, path in enumerate(path_sel):
@@ -43,7 +45,7 @@ def get_paths_asl(dir_dataset='../../../resource/dataset/fingerspelling5/dataset
     paths = {}
 
     for dir_letter in alphabet:
-        paths[dir_letter] = [str]
+        paths[dir_letter] = []
         for dir_set in sets:
             fnames = [f for f in os.listdir(dir_dataset + dir_set + "/" + dir_letter) if 'color' in f]
             for fname in fnames:
@@ -58,7 +60,7 @@ def get_paths_tm(dir_dataset='../../../resource/dataset/tm'):
     paths = {}
 
     for dir_letter in alphabet:
-        paths[dir_letter] = [str]
+        paths[dir_letter] = []
         i = 1
         while os.path.isfile(dir_dataset + '/' + dir_letter + str(i) + '.tif'):
             paths[dir_letter].append(dir_dataset + '/' + dir_letter + str(i) + '.tif')

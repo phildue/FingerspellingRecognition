@@ -1,37 +1,39 @@
 import cv2
 import numpy as np
+from matplotlib.pyplot import subplot, imshow
 
 
 def pre_processing(img, im_size=(100, 120)):
     img_resized = cv2.resize(img, (im_size[0], im_size[1]))
-    cv2.imshow('image', img_resized)
-    cv2.waitKey(10000)
-    img_preprocessed = cv2.blur(img_resized, (7, 7))
+    roi = get_roi(img_resized)
+
+    img_preprocessed = cv2.Canny(roi, threshold1=50, threshold2=100)
     cv2.imshow('image', img_preprocessed)
     cv2.waitKey(10000)
-    img_preprocessed = cv2.pyrMeanShiftFiltering(img_preprocessed, 30, 30)
-    cv2.imshow('image', img_preprocessed)
-    cv2.waitKey(10000)
-    img_preprocessed = filter_skin(img_preprocessed)
-    cv2.imshow('image', img_preprocessed)
-    cv2.waitKey(10000)
-    img_preprocessed = cv2.cvtColor(img_preprocessed, cv2.COLOR_RGB2GRAY)
-    cv2.imshow('image', img_preprocessed)
-    cv2.waitKey(10000)
-    img_preprocessed = cv2.Canny(img_preprocessed, threshold1=50, threshold2=100)
-    _, img_preprocessed = cv2.threshold(img_preprocessed, 10, 255, cv2.THRESH_BINARY)
-    cv2.imshow('image', img_preprocessed)
-    cv2.waitKey(10000)
-    _, contours, hierarchy = cv2.findContours(img_preprocessed, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
-    lens = []
-    for c in contours: lens.append(len(c))
-    contours = [c for c in contours if len(c) >= 50]
-    img_preprocessed = cv2.drawContours(img_resized, contours, -1, (0, 255, 0), 2)
-    cv2.imshow('image', img_preprocessed)
-    cv2.waitKey(10000)
+    # _, contours, hierarchy = cv2.findContours(img_preprocessed, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+    # lens = []
+    # for c in contours: lens.append(len(c))
+    # contours = [c for c in contours if len(c) >= 50]
+    # img_preprocessed = cv2.drawContours(img_resized, contours, -1, (0, 255, 0), 2)
+    # cv2.imshow('image', img_preprocessed)
+    # cv2.waitKey(10000)
     # TODO findContours/remove blobs/ calculate distance to centroid for each point on the contour
 
     return img_preprocessed
+
+
+def get_roi(img):
+    _, img_binary = cv2.threshold(img, 128, 255, cv2.THRESH_BINARY)
+    img_edges = cv2.Canny(img_binary, threshold1=50, threshold2=100)
+    _, contours, hierarchy = cv2.findContours(img_edges, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+
+    largest_contour = contours[np.argmax([cv2.contourArea(c) for c in contours])]
+
+    x, y, w, h = cv2.boundingRect(largest_contour)
+    # img_roi = cv2.rectangle(img_binary, x, y, (0, 0, 255), 2, 1)
+    # cv2.imshow('roi', img_roi)
+    # cv2.waitKey(10000)
+    return img[y - 1:y + h + 1, x - 1:x + w + 1]
 
 
 def filter_skin(image, lower_thresh=np.array([0, 40, 40], dtype="uint8"),

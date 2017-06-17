@@ -1,16 +1,15 @@
 import cv2
 
 # from tracker.MeanShiftSegmentor import mean_shift_segmentation
-from daq.DatasetGenerator import gendata_sign
+from daq.DatasetGenerator import gendata_sign, readdata_tm
 from daq.ImReader import read_im_file
 from daq.preprocessing.PreProcessing import pre_processing
 
 
 def main():
 
-    img, _ = gendata_sign(dir_dataset='../../../resource/dataset/fingerspelling5/dataset5/',
-                          sample_size=1,
-                          sets=["E"])
+    img, _ = gendata_sign(readdata_tm(),
+                          sample_size=1)
 
     img.reshape(shape=(100, 120))
 

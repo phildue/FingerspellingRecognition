@@ -1,11 +1,11 @@
 import numpy as np
 
 from daq.ImReader import read_letters
-from daq.preprocessing.PreProcessing import extract_descriptor
+from daq.preprocessing.PreProcessing import extract_descriptors
 
 
 def gendata_sign(img_file_paths,
-                 sample_size=2500, dim=100, letters=None):
+                 sample_size=2500, letters=None):
     if letters is None:
         letters = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t",
                    "u",
@@ -14,7 +14,9 @@ def gendata_sign(img_file_paths,
 
     img_pp_lists = {}
     for letter in img_lists:
-        img_pp_lists[letter] = extract_descriptor(img_lists[letter], dim)
+        img_pp_lists[letter] = extract_descriptors(img_lists[letter])
+
+    dim = len(next(iter(img_pp_lists.values()))[0][0])
 
     return vectorize(img_pp_lists,
                      dim=dim,

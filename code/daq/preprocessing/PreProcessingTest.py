@@ -1,23 +1,23 @@
-import random
-
 import cv2
 
-# from tracker.MeanShiftSegmentor import mean_shift_segmentation
-from daq.DatasetGenerator import gendata_sign
 from daq.ImReader import get_paths_tm
-from daq.preprocessing.PreProcessing import prefilter
+from daq.preprocessing.PreProcessing import prefilter, extract_descriptor
 
 
 def main():
 
     paths = get_paths_tm()
-    img = cv2.imread(paths['b'][2])
+    img = cv2.imread(paths['b'][9])
 
     cv2.imshow('image', img)
-    cv2.waitKey(1)
+    cv2.waitKey(5)
     img = prefilter(img)
-    cv2.imshow("after preprocessing", img)
-    cv2.waitKey(10000)
+    cv2.imshow("after prefiltering", img)
+    cv2.waitKey(5)
+    descriptor = extract_descriptor(img)
+    print("Descriptor: \n" + str(descriptor))
+    print("dim: \n" + str(len(descriptor)))
+
     cv2.destroyAllWindows()
     exit(0)
 

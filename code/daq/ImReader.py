@@ -5,6 +5,7 @@ import cv2
 
 
 def read_image(path):
+    img = None
     try:
         img = cv2.imread(path, 1)
         if img is None:
@@ -32,8 +33,8 @@ def read_letters(img_file_paths, sample_size, letters):
     return letter_imgs
 
 
-def getpaths_asl(dir_dataset='../../resource/dataset/fingerspelling5/dataset5/',
-                 sets=None, ):
+def get_paths_asl(dir_dataset='../../../resource/dataset/fingerspelling5/dataset5/',
+                  sets=None, ):
     if sets is None:
         sets = ["A", "B", "C", "D", "E"]
 
@@ -51,7 +52,7 @@ def getpaths_asl(dir_dataset='../../resource/dataset/fingerspelling5/dataset5/',
     return paths
 
 
-def getpaths_tm(dir_dataset='../../../resource/dataset/tm'):
+def get_paths_tm(dir_dataset='../../../resource/dataset/tm'):
     alphabet = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u",
                 "v", "w", "x", "y"]
     paths = {}

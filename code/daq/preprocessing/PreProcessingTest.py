@@ -1,14 +1,14 @@
 import cv2
 
 # from tracker.MeanShiftSegmentor import mean_shift_segmentation
-from daq.DatasetGenerator import gendata_sign, readdata_tm
-from daq.ImReader import read_im_file
+from daq.DatasetGenerator import gendata_sign
+from daq.ImReader import getpaths_tm
 from daq.preprocessing.PreProcessing import pre_processing
 
 
 def main():
 
-    img, _ = gendata_sign(readdata_tm(),
+    img, _ = gendata_sign(getpaths_tm(),
                           sample_size=1)
 
     img.reshape(shape=(100, 120))

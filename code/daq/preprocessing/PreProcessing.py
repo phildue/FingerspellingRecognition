@@ -6,11 +6,17 @@ from exceptions.exceptions import NoRoiFound
 
 def preprocess(imgs, roi_size=(30, 30)):
     imgs_preprocessed = []
+    error = 0
     for i, img in enumerate(imgs):
         try:
             imgs_preprocessed.append(preprocess_img(img, roi_size))
         except NoRoiFound:
-            print("Could not find region of interest in image: " + str(i))
+            error +=1
+
+    if error > 0:
+        print("Could not find region of interest in " + str(error) + " images")
+
+    return imgs_preprocessed
 
 
 def preprocess_img(img, im_size=(100, 120), roi_size=(30, 30)):

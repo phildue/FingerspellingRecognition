@@ -26,11 +26,12 @@ def extract_descriptors(imgs):
     return descriptors
 
 
-def extract_descriptor(img, n_points=50):
+def extract_descriptor(img, n_points=16):
     img = prefilter(img)
     contour = get_longest_contours(img)[0]
     centroid = get_centroid(contour)
-    return get_centroid_distances(contour, centroid, n_points)
+    points = get_equally_distr_points(contour, n_points)
+    return get_centroid_distances(points, centroid, n_points)
 
 
 def get_centroid(contour):
@@ -38,11 +39,9 @@ def get_centroid(contour):
     return np.array([moms['m01'] / moms['m00'], moms['m10'] / moms['m00']])
 
 
-def get_centroid_distances(contour, centroid, n_points):
+def get_centroid_distances(points, centroid, n_points):
     # calculate the distance of every point to the centroid
     #  this results in rotation invariant features
-    points = get_equally_distr_points(contour, n_points)
-
     distances = np.zeros(shape=[n_points, 2])
     for n in range(0, n_points):
         distances[n, :] = linalg.norm(points[n, :] - centroid)
@@ -61,8 +60,7 @@ def get_equally_distr_points(contour, n):
 
     delta_dist = total_dist / n
     points = np.zeros(shape=(n, 2))
-    # points[0, :] =
-    current_p = contour[0]
+    points[0, :] = current_p = contour[0]
     current_dist = float(0)
     n_contour = n_points = 1
     while current_dist < total_dist - delta_dist-0.0001:

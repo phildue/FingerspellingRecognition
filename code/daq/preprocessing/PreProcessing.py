@@ -61,10 +61,11 @@ def get_equally_distr_points(contour, n):
 
     delta_dist = total_dist / n
     points = np.zeros(shape=(n, 2))
-    points[0, :] = current_p = contour[0]
+    # points[0, :] =
+    current_p = contour[0]
     current_dist = float(0)
     n_contour = n_points = 1
-    while current_dist < total_dist - delta_dist:
+    while current_dist < total_dist - delta_dist-0.0001:
         last_p = current_p.copy()
 
         if linalg.norm(contour_round[n_contour] - current_p) + current_dist < delta_dist * n_points:

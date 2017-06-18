@@ -1,4 +1,4 @@
-from sklearn.model_selection import train_test_split
+from sklearn.model_selection import train_test_split, cross_val_score
 
 
 def hold_out_eval(classifier, data, labels):
@@ -11,3 +11,7 @@ def hold_out_eval(classifier, data, labels):
         if label_predict != labels_test[i]:
             error += 1
     return error / len(data_test)
+
+
+def crossval(classifier, data, labels):
+    return cross_val_score(classifier, data, labels, n_jobs=4)

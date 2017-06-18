@@ -4,9 +4,16 @@ from exceptions.exceptions import NotTrained
 
 
 class SignClassifier:
-
     scikit_object = SVC()
     trained = False
+
+    def __init__(self, gamma=None, C=None):
+        if gamma is not None and C is not None:
+            self.scikit_object = SVC(gamma=gamma, C=C)
+        elif gamma is not None:
+            self.scikit_object = SVC(gamma=gamma)
+        elif C is not None:
+            self.scikit_object = SVC(C)
 
     def train(self, data, labels):
         self.scikit_object.fit(data, labels.ravel())
@@ -17,6 +24,3 @@ class SignClassifier:
             raise NotTrained
         else:
             return self.scikit_object.predict(data)
-
-
-

@@ -14,4 +14,4 @@ def hold_out_eval(classifier, data, labels):
 
 
 def crossval(classifier, data, labels):
-    return cross_val_score(classifier, data, labels, n_jobs=4)
+    return cross_val_score(classifier.scikit_object, data, labels, n_jobs=4)

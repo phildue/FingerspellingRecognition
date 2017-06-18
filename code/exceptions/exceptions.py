@@ -4,3 +4,10 @@ class NotTrained(Exception):
 
 class NoRoiFound(Exception):
     pass
+
+
+class NoContoursFound(Exception):
+    pass
+
+class DescriptorFailed(Exception):
+    pass

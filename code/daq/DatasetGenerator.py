@@ -16,7 +16,7 @@ def gendata_sign(img_file_paths,
     for letter in img_lists:
         img_pp_lists[letter] = extract_descriptors(img_lists[letter])
 
-    dim = len(next(iter(img_pp_lists.values()))[0][0])
+    dim = len(next(iter(img_pp_lists.values()))[0])
 
     return vectorize(img_pp_lists,
                      dim=dim,

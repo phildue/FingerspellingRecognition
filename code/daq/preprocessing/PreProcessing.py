@@ -2,21 +2,27 @@ import cv2
 import numpy as np
 from numpy.linalg import linalg
 
-from exceptions.exceptions import NoRoiFound
+from exceptions.exceptions import NoRoiFound, NoContoursFound, DescriptorFailed
 
 
 def extract_descriptors(imgs):
     descriptors = []
-    error = 0
+    error_roi = error_contours = error_descr = 0
     for img in imgs:
         try:
             descriptors.append(extract_descriptor(img))
         except NoRoiFound:
-            error += 1
-
-    if error > 0:
-        print("Could not find region of interest in " + str(error) + " images")
-
+            error_roi += 1
+        except NoContoursFound:
+            error_contours += 1
+        except DescriptorFailed:
+            error_descr += 1
+    if error_roi > 0:
+        print("ExtractDescriptors:: Could not find region of interest in " + str(error_roi) + " images")
+    if error_contours > 0:
+        print("ExtractDescriptors:: Could not find contours in " + str(error_contours) + " images")
+    if error_descr > 0:
+        print("ExtractDescriptors:: Could not calculate descriptor in " + str(error_descr) + " images")
     return descriptors
 
 
@@ -37,9 +43,9 @@ def get_centroid_distances(contour, centroid, n_points):
     #  this results in rotation invariant features
     points = get_equally_distr_points(contour, n_points)
 
-    distances = []
-    for p in points:
-        distances.append(linalg.norm(p - centroid))
+    distances = np.zeros(shape=[n_points, 2])
+    for n in range(0, n_points):
+        distances[n, :] = linalg.norm(points[n, :] - centroid)
 
     return distances
 
@@ -48,26 +54,29 @@ def get_equally_distr_points(contour, n):
     # get points along the found contour in equally distributed
     # distances. This is required to have the same amount of
     # features for every shape
+    contour_round = np.round(contour, 4)
     total_dist = float(0)
-    for n_contour in range(1, len(contour)):
-        total_dist += np.linalg.norm(contour[n_contour] - contour[n_contour - 1])
+    for n_contour in range(1, len(contour_round)):
+        total_dist += np.linalg.norm(contour_round[n_contour] - contour_round[n_contour - 1])
 
-    delta_dist = total_dist / (n-1)
-    points = [contour[0]]
+    delta_dist = total_dist / n
+    points = np.zeros(shape=(n, 2))
+    points[0, :] = current_p = contour[0]
     current_dist = float(0)
-    n_contour = 0
-    current_p = contour[0].astype(float)
-    while current_dist < total_dist:
+    n_contour = n_points = 1
+    while current_dist < total_dist - delta_dist:
         last_p = current_p.copy()
 
-        if linalg.norm(contour[n_contour] - current_p) + current_dist < delta_dist * len(points):
-            current_p = contour[n_contour]
+        if linalg.norm(contour_round[n_contour] - current_p) + current_dist < delta_dist * n_points:
+            current_p = contour_round[n_contour]
             n_contour += 1
         else:
-            vnext = contour[n_contour] - current_p
-            step = (delta_dist * len(points) - current_dist) / linalg.norm(vnext)
+            vnext = contour_round[n_contour] - current_p
+            dist = linalg.norm(vnext)
+            step = (delta_dist * n_points - current_dist) / dist
             current_p = np.add(current_p, step * vnext)
-            points.append(current_p)
+            points[n_points, :] = current_p
+            n_points += 1
 
         current_dist += linalg.norm(current_p - last_p)
     return points
@@ -86,6 +95,8 @@ def prefilter(img, im_size=(100, 120), roi_size=(30, 30)):
 
 def get_longest_contours(image, n_longest=1):
     _, contours, _ = cv2.findContours(image, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+    if len(contours) < 1:
+        raise NoContoursFound("get_longest_contours::No Contours found in image")
     longest_contours = []
     for i in range(0, n_longest):
         c_i = np.argmax([c.size for c in contours])

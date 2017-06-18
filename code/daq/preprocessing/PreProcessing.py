@@ -20,11 +20,11 @@ def extract_descriptors(imgs):
     return descriptors
 
 
-def extract_descriptor(img):
+def extract_descriptor(img, n_points=50):
     img = prefilter(img)
     contour = get_longest_contours(img)[0]
     centroid = get_centroid(contour)
-    return get_centroid_distances(contour, centroid, n_points=50)
+    return get_centroid_distances(contour, centroid, n_points)
 
 
 def get_centroid(contour):
@@ -48,20 +48,28 @@ def get_equally_distr_points(contour, n):
     # get points along the found contour in equally distributed
     # distances. This is required to have the same amount of
     # features for every shape
-    total_c_dist = np.linalg.norm(contour, axis=0)
-    delta_dist = total_c_dist / n
-    points = []
-    for i in range(0, n):
-        p_dist = 0
-        n = 0
-        while p_dist < delta_dist * i:
-            n += 1
-            p_dist = linalg.norm(contour[0:n])
-        overshoot_dist = linalg.norm(contour[0:n]) - delta_dist * i
-        total_dist = linalg.norm(contour(n) - contour(n - 1))
-        required_dist = 1 - overshoot_dist / total_dist
-        direction = contour(n) - contour(n - 1)
-        points.append(contour(n - 1) + direction * required_dist)
+    total_dist = float(0)
+    for n_contour in range(1, len(contour)):
+        total_dist += np.linalg.norm(contour[n_contour] - contour[n_contour - 1])
+
+    delta_dist = total_dist / (n-1)
+    points = [contour[0]]
+    current_dist = float(0)
+    n_contour = 0
+    current_p = contour[0].astype(float)
+    while current_dist < total_dist:
+        last_p = current_p.copy()
+
+        if linalg.norm(contour[n_contour] - current_p) + current_dist < delta_dist * len(points):
+            current_p = contour[n_contour]
+            n_contour += 1
+        else:
+            vnext = contour[n_contour] - current_p
+            step = (delta_dist * len(points) - current_dist) / linalg.norm(vnext)
+            current_p = np.add(current_p, step * vnext)
+            points.append(current_p)
+
+        current_dist += linalg.norm(current_p - last_p)
     return points
 
 

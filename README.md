@@ -7,3 +7,5 @@
 [Skincolor](https://archive.ics.uci.edu/ml/machine-learning-databases/00229/)
 
 [Fingerspelling Dataset - Thomas Moeslund](http://www-prima.inrialpes.fr/FGnet/data/12-MoeslundGesture/database.html)
+
+[Overleaf-Report](https://www.overleaf.com/8743838fnnjtvrxbqth#/31192954/)

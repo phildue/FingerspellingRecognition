@@ -13,9 +13,9 @@ letters = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "k", "l", "m", "n", "o",
            "u",
            "v", "w", "x", "y"]
 example_image_file = "../resource/dataset/tm/" + random.choice(letters) + random.choice(range(1,40)) + ".gif"
-classifier_file = "../resource/sign_classifier"
-scaler_file = "../resource/scaler"
-extractor_file = "../resource/extractor"
+classifier_file = "../resource/models/classif.mdl"
+scaler_file = "../resource/models/scaler.mdl"
+extractor_file = "../resource/models/extractor.mdl"
 cmd = 'y'
 while cmd != 'n':
     # read image

@@ -26,9 +26,12 @@ def get_scaler(data):
 
 def extract_features(descriptor, scaler_file: str, extractor_file):
     if extract_features.scaler is None:
-        extract_features.scaler = pickle.load(scaler_file)
+        with open(scaler_file, 'wb') as f:
+            extract_features.scaler = pickle.load(f)
     if extract_features.extractor is None:
-        extract_features.extractor = pickle.load(extractor_file)
+        with open(extractor_file, 'wb') as f:
+            extract_features.extractor = pickle.load(f)
+
     descriptor_scaled = extract_features.scaler.transform(descriptor)
     return extract_features.extractor.transform(descriptor_scaled)
 

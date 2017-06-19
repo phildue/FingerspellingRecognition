@@ -16,7 +16,7 @@ def gendata_sign(dir_dataset='../../resource/dataset/fingerspelling5/dataset5/',
                     "v", "w", "x", "y"]
 
     n_letters = len(alphabet)
-    dim = im_size[0] * im_size[1]  # * im_size[2]
+    dim = im_size[0] * im_size[1] * im_size[2]
     data = np.zeros(shape=(sample_size * n_letters, dim), dtype=np.uint8)
     labels = np.zeros(shape=(sample_size * n_letters, 1), dtype=np.uint8)
 

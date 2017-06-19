@@ -8,7 +8,7 @@ from exceptions.exceptions import NotTrained
 
 
 class SignClassifier:
-    scikit_object = MLPClassifier()
+    scikit_object = SVC()
     trained = False
 
     def __init__(self, gamma=None, C=None):

@@ -13,5 +13,5 @@ def hold_out_eval(classifier, data, labels):
     return error / len(data_test)
 
 
-def crossval(classifier, data, labels):
-    return cross_val_score(classifier, data, labels, n_jobs=4)
+def crossval(classifier, data, labels, folds=4):
+    return cross_val_score(classifier.scikit_object, data, labels.ravel(), cv=folds)

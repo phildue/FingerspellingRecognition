@@ -1,3 +1,5 @@
+from numpy import mean
+
 from classification.SignClassifier import SignClassifier
 from classification.SkinClassifier import SkinClassifier
 from daq.DatasetGenerator import gendata_sign, gendata_skin
@@ -19,8 +21,8 @@ def SignClassifierTest():
     print("Dimension after PCA: " + str(data.shape[1]))
     classif = SignClassifier()
     # error = hold_out_eval(SignClassifier(gamma=pow(2, -3), C=pow(2, -1)), data, labels)
-    print("Parameters: gamma= " + str(classif.scikit_object.gamma)+", C= " + str(classif.scikit_object.C))
-    print("Accuracy: " + str(crossval(classif, data, labels)))
+    # print("Parameters: gamma= " + str(classif.scikit_object.gamma)+", C= " + str(classif.scikit_object.C))
+    print("Accuracy: " + str(mean(crossval(classif, data, labels,folds=6))))
 
 
 def SkinClassifierTest():

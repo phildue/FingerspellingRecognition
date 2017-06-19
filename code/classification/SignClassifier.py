@@ -1,3 +1,6 @@
+import pickle
+
+import numpy as np
 from sklearn.neural_network import MLPClassifier
 from sklearn.svm import SVC
 
@@ -25,3 +28,8 @@ class SignClassifier:
             raise NotTrained
         else:
             return self.scikit_object.predict(data)
+
+    @staticmethod
+    def classify(descriptor: np.array, classifier_file: str) -> int:
+        clf = pickle.load(classifier_file)
+        return clf.predict(descriptor)

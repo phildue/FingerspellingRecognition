@@ -1,11 +1,33 @@
-# read image
+import random
 
-# crop hand
+import numpy as np
 
-# convert to grayscale
+from classification.SignClassifier import SignClassifier
+from daq.ImReader import read_image
+from daq.preprocessing.PreProcessing import prefilter, extract_descriptor
 
-# extract features
+# init
+from representation.FeatureExtraction import extract_features
 
-# classify
-
-# print output
+letters = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t",
+           "u",
+           "v", "w", "x", "y"]
+example_image_file = "../resource/dataset/tm/" + random.choice(letters) + random.choice(range(1,40)) + ".gif"
+classifier_file = "../resource/sign_classifier"
+scaler_file = "../resource/scaler"
+extractor_file = "../resource/extractor"
+cmd = 'y'
+while cmd != 'n':
+    # read image
+    img = read_image(example_image_file)
+    # crop hand
+    img = prefilter(img)
+    # extract descriptor
+    descriptor = extract_descriptor(img)
+    # apply preprocessing
+    object_rep = extract_features(descriptor, scaler_file, extractor_file)
+    # classify
+    class_ = SignClassifier().classify(object_rep, classifier_file)
+    # print output
+    print("Letter " + str(letters[class_]))
+    cmd = input("Continue? [y|n]: ")

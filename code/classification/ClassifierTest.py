@@ -5,7 +5,6 @@ from classification.SkinClassifier import SkinClassifier
 from daq.DatasetGenerator import gendata_sign, gendata_skin
 from daq.ImReader import get_paths_tm
 from evaluation.methods import hold_out_eval, crossval
-from representation.DissimilarityRep import get_dissim_rep
 from representation.FeatureExtraction import pca_transform
 
 

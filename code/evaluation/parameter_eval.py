@@ -4,6 +4,7 @@ from classification.SignClassifier import SignClassifier
 from daq.DatasetGenerator import gendata_sign
 from daq.ImReader import get_paths_tm
 from evaluation.methods import crossval
+from representation.FeatureExtraction import pca_transform
 
 
 def classifier_parameter_evaluation():
@@ -20,12 +21,15 @@ def classifier_parameter_evaluation():
 
 
 def classifier_C_evaluation():
-    results = np.zeros(shape=(10, 1))
+    results = np.zeros(shape=(13, 2))
     data, labels = gendata_sign(get_paths_tm("../../resource/dataset/tm"))
-    for n_c in range(3, 10):
-        classifier = SignClassifier(C=pow(2,n_c))
-        results[n_c] = np.mean(crossval(classifier, data, labels,2))
-        print("Results for sigma= " + "auto" + ", C= " + str(pow(2,n_c)) + ": " + str(results[n_c]))
+    data = pca_transform(data)
+    for i, n_c in enumerate(range(-3, 10)):
+        classifier = SignClassifier(C=pow(2, n_c))
+        result = crossval(classifier, data, labels, 3)
+        results[i, 0] = np.mean(result)
+        results[i, 1] = np.std(result)
+        print("Accuracy for sigma= " + "auto" + ", C= " + str(pow(2, n_c)) + ": " + str(results[i, 0]) + "(+/- "+str(results[i,1])+ ")")
 
     np.save("../../results/classifier_C_evaluation.npy", results)
 

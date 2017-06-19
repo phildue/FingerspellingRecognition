@@ -17,21 +17,27 @@ def gendata_sign(img_file_paths,
         descriptor_lists[letter] = extract_descriptors(img_lists[letter])
 
     dim = next(iter(descriptor_lists.values()))[0].size
+    sample_size_valid = 0
+    for k in descriptor_lists.keys():
+        sample_size_valid += len(descriptor_lists[k])
+
+    print("Dimension: " + str(dim), "Samples: " + str(sample_size_valid))
 
     return vectorize(descriptor_lists,
                      dim=dim,
-                     sample_size=sample_size)
+                     sample_size=sample_size_valid)
 
 
 def vectorize(descriptor_lists, dim, sample_size):
-    n_letters = len(descriptor_lists)
-    data = np.zeros(shape=(sample_size * n_letters, dim), dtype=np.uint8)
-    labels = np.zeros(shape=(sample_size * n_letters, 1), dtype=np.uint8)
+    data = np.zeros(shape=(sample_size, dim), dtype=np.uint8)
+    labels = np.zeros(shape=(sample_size, 1), dtype=np.uint8)
+    index = 0
     for class_, letter in enumerate(sorted(descriptor_lists.keys()), 1):
-        for n, image in enumerate(descriptor_lists[letter]):
-            index = n + (class_ - 1) * sample_size
-            data[index, :] = image.reshape(1, dim)
+        for n, descriptor in enumerate(descriptor_lists[letter]):
+            data[index, :] = descriptor.reshape(1, dim)
             labels[index] = class_
+            index += 1
+
     return data, labels
 
 

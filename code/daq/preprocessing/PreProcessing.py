@@ -28,7 +28,6 @@ def prefilter(img, im_size=(100, 120), roi_size=(30, 30)):
 
     roi = get_roi(img_resized)
     roi = cv2.resize(roi, roi_size)
-    _, roi = cv2.threshold(roi, 128, 255, cv2.THRESH_BINARY)
     roi = cv2.Canny(roi, threshold1=50, threshold2=100)
 
     return roi

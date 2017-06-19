@@ -1,10 +1,11 @@
+from sklearn.neural_network import MLPClassifier
 from sklearn.svm import SVC
 
 from exceptions.exceptions import NotTrained
 
 
 class SignClassifier:
-    scikit_object = SVC()
+    scikit_object = MLPClassifier()
     trained = False
 
     def __init__(self, gamma=None, C=None):

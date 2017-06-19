@@ -16,7 +16,7 @@ def SignClassifierTest():
 
     data = pca_transform(data)
     # data = get_dissim_rep(data)
-
+    print("Dimension after PCA: " + str(data.shape[1]))
     classif = SignClassifier()
     # error = hold_out_eval(SignClassifier(gamma=pow(2, -3), C=pow(2, -1)), data, labels)
     print("Parameters: gamma= " + str(classif.scikit_object.gamma)+", C= " + str(classif.scikit_object.C))

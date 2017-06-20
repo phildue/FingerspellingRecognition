@@ -4,7 +4,7 @@ import numpy as np
 
 from classification.SignClassifier import SignClassifier
 from daq.ImReader import read_image
-from daq.preprocessing.PreProcessing import prefilter, extract_descriptor
+from daq.preprocessing.PreProcessing import preprocess, extract_descriptor
 
 # init
 from representation.FeatureExtraction import extract_features
@@ -22,7 +22,7 @@ while cmd != 'n':
     # read image
     img = read_image(example_image_file)
     # crop hand
-    img = prefilter(img)
+    img = preprocess(img)
     # extract descriptor
     descriptor = extract_descriptor(img)
     # apply preprocessing

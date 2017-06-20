@@ -1,7 +1,7 @@
 import cv2
 
 from daq.ImReader import get_paths_tm
-from daq.preprocessing.PreProcessing import prefilter, extract_descriptor
+from daq.preprocessing.PreProcessing import preprocess, extract_descriptor
 
 
 def main():
@@ -10,7 +10,7 @@ def main():
 
     cv2.imshow('image', img)
     cv2.waitKey(5)
-    img = prefilter(img)
+    img = preprocess(img)
     cv2.imshow("after prefiltering", img)
     cv2.waitKey(10000)
 

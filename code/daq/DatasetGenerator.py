@@ -1,7 +1,7 @@
 import numpy as np
 
 from daq.ImReader import read_letters
-from daq.preprocessing.PreProcessing import extract_descriptors
+from daq.preprocessing.PreProcessing import extract_descriptors, preprocesss
 
 
 def gendata_sign(img_file_paths,
@@ -12,18 +12,18 @@ def gendata_sign(img_file_paths,
                    "v", "w", "x", "y"]
     img_lists = read_letters(img_file_paths, sample_size, letters)
 
-    descriptor_lists = {}
-    for letter in img_lists:
-        descriptor_lists[letter] = extract_descriptors(img_lists[letter])
+    img_pp_dict = dict((letter, preprocesss(img_lists[letter])) for letter in img_lists)
 
-    dim = next(iter(descriptor_lists.values()))[0].size
+    descriptor_dict = dict((letter,extract_descriptors(img_pp_dict[letter])) for letter in img_pp_dict)
+
+    dim = next(iter(descriptor_dict.values()))[0].size
     sample_size_valid = 0
-    for k in descriptor_lists.keys():
-        sample_size_valid += len(descriptor_lists[k])
+    for k in descriptor_dict.keys():
+        sample_size_valid += len(descriptor_dict[k])
 
     print("Dimension: " + str(dim), "Samples: " + str(sample_size_valid))
 
-    return vectorize(descriptor_lists,
+    return vectorize(descriptor_dict,
                      dim=dim,
                      sample_size=sample_size_valid)
 

@@ -5,24 +5,27 @@ from exceptions.exceptions import NoRoiFound, NoContoursFound
 
 
 def extract_descriptors(imgs):
-    descriptors = []
-    error_roi = 0
-    for img in imgs:
-        try:
-            descriptors.append(extract_descriptor(img))
-        except NoRoiFound:
-            error_roi += 1
-    if error_roi > 0:
-        print("ExtractDescriptors:: Could not find region of interest in " + str(error_roi) + " images")
-    return descriptors
+    return [extract_descriptor(img) for img in imgs]
 
 
 def extract_descriptor(img):
-    img = prefilter(img)
     return img.reshape(1, img.size)
 
 
-def prefilter(img, im_size=(100, 120), roi_size=(30, 30)):
+def preprocesss(imgs: [np.array], im_size=(100, 120), roi_size=(30, 30)) -> [np.array]:
+    img_pp = []
+    error_roi = 0
+    for img in imgs:
+        try:
+            img_pp.append(preprocess(img, im_size, roi_size))
+        except NoRoiFound:
+            error_roi += 1
+    if error_roi > 0:
+        print("PreProcessing:: Could not find region of interest in " + str(error_roi) + " images")
+    return img_pp
+
+
+def preprocess(img: np.array, im_size=(100, 120), roi_size=(30, 30)) -> np.array:
     # find roi (hand), crop it, find edges
     img_resized = cv2.resize(img, im_size)
 

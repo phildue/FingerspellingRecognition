@@ -1,7 +1,13 @@
 import cv2
 import imutils
-
+from sklearn.externals import joblib
 from daq.cam.InputGenerator import InputGenerator
+from daq.dataset.preprocessing import extract_descriptor
+
+
+letters = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t",
+           "u",
+           "v", "w", "x", "y"]
 
 
 class InputHandler:
@@ -23,7 +29,10 @@ class InputHandler:
         if self.camera is None:
             self.camera = cv2.VideoCapture(0)
             self.num_frames = 0
+
             inputgen = InputGenerator(0.5)
+            model = joblib.load('../../../resource/models/model.pkl')
+
             # keep looping, until interrupted
             while True:
                 # get the current frame
@@ -55,6 +64,8 @@ class InputHandler:
                     return
                 gray = cv2.GaussianBlur(gray, (7, 7), 0)
 
+                edges = None
+
                 # to get the background, keep looking till a threshold is reached
                 # so that our running average model gets calibrated
                 if self.num_frames < 30:
@@ -79,6 +90,19 @@ class InputHandler:
 
                 # display the frame with segmented hand
                 cv2.imshow("Video Feed", clone)
+
+                if edges is not None:
+                    imagein = edges.copy()
+                    im_size = (30, 30)
+                    imagein = cv2.resize(imagein, im_size)
+
+                    # extract descriptor
+                    descriptor = extract_descriptor(imagein)
+                    # classify
+                    class_ = model.predict(descriptor)
+                    # print output
+                    print("Detected Letter " + str(letters[int(class_) - 1]))
+                    print("Actual Letter: " + 'a')
 
                 # increment the number of frames
                 self.num_frames += 1

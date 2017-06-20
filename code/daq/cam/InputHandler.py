@@ -40,7 +40,7 @@ class InputHandler:
                 (height, width) = frame.shape[:2]
 
                 # get the ROI
-                self.set_roi(width//2, width, 0, 2*height//3)
+                self.set_roi(width // 2, width, 0, 2 * height // 3)
 
                 roi = frame[self.roi_top:self.roi_bottom, self.roi_left:self.roi_right]
 
@@ -92,6 +92,7 @@ class InputHandler:
             # free up memory
             self.camera.release()
             cv2.destroyAllWindows()
+
 
 inputhandler = InputHandler()
 inputhandler.run()

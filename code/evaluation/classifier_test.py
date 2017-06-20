@@ -1,7 +1,7 @@
-from daq.datageneration.ImReader import get_paths_tm
 from numpy import mean
 
 from classification.model import get_model
+from daq.dataset.fileaccess import get_paths_tm
 from daq.dataset.gendata import gendata_sign
 from evaluation.methods import crossval
 

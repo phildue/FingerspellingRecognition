@@ -9,8 +9,7 @@ def extract_descriptors(imgs):
 
 
 def extract_descriptor(img):
-    hog = cv2.HOGDescriptor()
-    return hog.compute(img)
+    return img.reshape(1, img.size)
 
 
 def preprocesss(imgs: [np.array], im_size=(100, 120), roi_size=(30, 30)) -> [np.array]:

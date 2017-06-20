@@ -23,6 +23,6 @@ cv2.waitKey(10000)
 
 descriptor = extract_descriptor(img)
 print("Descriptor: \n" + str(descriptor))
-print("dim: \n" + str(len(descriptor)))
+print("dim: \n" + str(descriptor.shape[1]))
 cv2.destroyAllWindows()
 exit(0)

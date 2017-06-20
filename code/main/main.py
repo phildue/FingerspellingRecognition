@@ -1,9 +1,9 @@
 import random
 
 import cv2
-from daq.imreader import imreader
 from sklearn.externals import joblib
 
+from daq.dataset.fileaccess import read_image
 from daq.dataset.preprocessing import preprocess, extract_descriptor
 # init
 from exceptions.exceptions import NoRoiFound
@@ -14,16 +14,25 @@ letters = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "k", "l", "m", "n", "o",
 
 dir_dataset = '../../resource/dataset/tm'
 model = joblib.load('../../resource/models/model.pkl')
+cap = cv2.VideoCapture()
+if not cap.isOpened:
+    print("Could not read webcam")
 
-cmd = 'y'
-while cmd != 'n':
-    letter = str(random.choice(letters))
-    example_image_file = "../../resource/dataset/tm/" + letter + str(
-        random.choice(range(1, 40))) + ".tif"
+while cap.isOpened and cv2.waitKey(10) != 27:
+    # letter = str(random.choice(letters))
+    # example_image_file = "../../resource/dataset/tm/" + letter + str(
+    #    random.choice(range(1, 40))) + ".tif"
     # read image
-    img = imreader(example_image_file)
+    # img = read_image(example_image_file)
+    success, img = cap.read()
+    if not success:
+        print("Error on reading webcam")
+        break
+
+    cv2.imshow("Read image", img)
+
+    img = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
     #
-    cv2.imshow("Read image",img)
     # crop hand
     try:
         img = preprocess(img)
@@ -34,8 +43,7 @@ while cmd != 'n':
     # classify
     class_ = model.predict(descriptor)
     # print output
-    print("Detected Letter " + str(letters[int(class_)-1]))
+    print("Detected Letter " + str(letters[int(class_) - 1]))
     print("Actual Letter: " + letter)
-    cv2.waitKey(0)
 
-    # cmd = input("Continue? [y|n]: ")
+cv2.destroyAllWindows()

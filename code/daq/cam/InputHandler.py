@@ -30,7 +30,7 @@ class InputHandler:
                 (grabbed, frame) = self.camera.read()
 
                 # resize the frame
-                frame = imutils.resize(frame, width=700)
+                frame = imutils.resize(frame, width=800)
 
                 # flip the frame so that it is not the mirror view
                 frame = cv2.flip(frame, 1)
@@ -60,27 +60,28 @@ class InputHandler:
                 if self.num_frames < 30:
                     inputgen.run_avg(gray)
                 else:
-                    # segment the hand region
-                    hand = inputgen.get_foreground(gray)
+                    if (self.num_frames - 30) % 50 == 0:
+                        # segment the hand region
+                        hand = inputgen.get_foreground(gray)
 
-                    # check whether hand region is segmented
-                    if hand is not None:
-                        # if yes, unpack the thresholded image and
-                        # segmented region
-                        (edges, segmented) = hand
+                        # check whether hand region is segmented
+                        if hand is not None:
+                            # if yes, unpack the thresholded image and
+                            # segmented region
+                            (edges, segmented) = hand
 
-                        # draw the segmented region and display the frame
-                        cv2.drawContours(clone, [segmented + (self.roi_right, self.roi_top)], -1, (0, 0, 255))
-                        cv2.imshow("Hand Contour", edges)
+                            # draw the segmented region and display the frame
+                            cv2.drawContours(clone, [segmented + (self.roi_right, self.roi_top)], -1, (0, 0, 255))
+                            cv2.imshow("Hand Contour", edges)
 
                 # draw the segmented hand
                 cv2.rectangle(clone, (self.roi_left, self.roi_top), (self.roi_right, self.roi_bottom), (0, 255, 0), 2)
 
-                # increment the number of frames
-                self.num_frames += 1
-
                 # display the frame with segmented hand
                 cv2.imshow("Video Feed", clone)
+
+                # increment the number of frames
+                self.num_frames += 1
 
                 # observe the keypress by the user
                 keypress = cv2.waitKey(1) & 0xFF

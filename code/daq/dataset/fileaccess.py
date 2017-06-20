@@ -4,7 +4,7 @@ import random
 import cv2
 
 
-def imreader(path):
+def read_image(path):
     img = None
     try:
         img = cv2.imread(path, 1)
@@ -29,7 +29,7 @@ def read_letters(img_file_paths, sample_size, letters):
             print("Too many samples requested for [" + letter + "], taking all: " + str(len(path_sel)))
 
         for sel_samples, path in enumerate(path_sel):
-            img = imreader(path)
+            img = read_image(path)
             letter_imgs[letter].append(img)
 
     return letter_imgs

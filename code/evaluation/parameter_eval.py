@@ -1,10 +1,10 @@
 import numpy as np
 from daq.datageneration.ImReader import get_paths_tm
+from representation.FeatureExtraction import pca_fit_transform
 
 from classification.model import SignClassifier
-from daq.gendata import gendata_sign
+from daq.dataset.gendata import gendata_sign
 from evaluation.methods import crossval
-from representation.FeatureExtraction import pca_fit_transform
 
 
 def classifier_parameter_evaluation():

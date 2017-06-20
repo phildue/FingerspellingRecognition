@@ -1,10 +1,10 @@
 import random
 
 import cv2
+from daq.imreader import imreader
 from sklearn.externals import joblib
 
-from daq.ImReader import imreader
-from daq.preprocessing import preprocess, extract_descriptor
+from daq.dataset.preprocessing import preprocess, extract_descriptor
 # init
 from exceptions.exceptions import NoRoiFound
 

@@ -1,8 +1,8 @@
+from daq.imreader import get_paths_tm
 from sklearn.externals import joblib
 
 from classification.model import get_model
-from daq.ImReader import get_paths_tm
-from daq.gendata import gendata_sign
+from daq.dataset.gendata import gendata_sign
 
 dir_dataset = '../../resource/dataset/tm'
 model_file = '../../resource/models/model.pkl'

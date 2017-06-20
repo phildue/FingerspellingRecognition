@@ -1,7 +1,7 @@
 import cv2
 
 from daq.ImReader import get_paths_tm
-from daq.preprocessing.PreProcessing import preprocess, extract_descriptor
+from daq.preprocessing import preprocess, extract_descriptor
 
 
 def main():

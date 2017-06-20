@@ -3,9 +3,8 @@ import random
 import cv2
 from sklearn.externals import joblib
 
-from daq.ImReader import read_image
-from daq.preprocessing.PreProcessing import preprocess, extract_descriptor
-
+from daq.ImReader import imreader
+from daq.preprocessing import preprocess, extract_descriptor
 # init
 from exceptions.exceptions import NoRoiFound
 
@@ -22,7 +21,7 @@ while cmd != 'n':
     example_image_file = "../../resource/dataset/tm/" + letter + str(
         random.choice(range(1, 40))) + ".tif"
     # read image
-    img = read_image(example_image_file)
+    img = imreader(example_image_file)
     #
     cv2.imshow("Read image",img)
     # crop hand

@@ -9,8 +9,9 @@ def extract_descriptors(imgs):
 
 
 def extract_descriptor(img):
-    return img.reshape(1, img.size)
-
+    hog = cv2.HOGDescriptor()
+    padding = (2, 2)
+    return hog.compute(img, winStride=(8, 8), padding=padding, locations=[(15, 15)])
 
 def preprocesss(imgs: [np.array], im_size=(100, 120), roi_size=(30, 30)) -> [np.array]:
     img_pp = []
@@ -31,7 +32,7 @@ def preprocess(img: np.array, im_size=(100, 120), roi_size=(30, 30)) -> np.array
 
     roi = get_roi(img_resized)
     roi = cv2.resize(roi, roi_size)
-    roi = cv2.Canny(roi, threshold1=50, threshold2=100)
+    # roi = cv2.Canny(roi, threshold1=50, threshold2=100)
 
     return roi
 

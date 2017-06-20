@@ -12,10 +12,11 @@ from representation.FeatureExtraction import extract_features
 letters = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t",
            "u",
            "v", "w", "x", "y"]
-example_image_file = "../resource/dataset/tm/" + random.choice(letters) + random.choice(range(1,40)) + ".gif"
-classifier_file = "../resource/models/classif.mdl"
-scaler_file = "../resource/models/scaler.mdl"
-extractor_file = "../resource/models/extractor.mdl"
+example_image_file = "../../resource/dataset/tm/" + str(random.choice(letters)) + str(random.choice(range(1,40))) + ".tif"
+dir_dataset = '../../resource/dataset/tm'
+scaler_file = '../../resource/models/scaler.pkl'
+extractor_file = '../../resource/models/extractor.pkl'
+classif_file = '../../resource/models/classif.pkl'
 cmd = 'y'
 while cmd != 'n':
     # read image

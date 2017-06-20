@@ -1,6 +1,7 @@
 import pickle
 
 import numpy as np
+from sklearn.externals import joblib
 from sklearn.neural_network import MLPClassifier
 from sklearn.svm import SVC
 
@@ -31,5 +32,5 @@ class SignClassifier:
 
     @staticmethod
     def classify(descriptor: np.array, classifier_file: str) -> int:
-        clf = pickle.load(classifier_file)
+        clf = joblib.load(classifier_file)
         return clf.predict(descriptor)

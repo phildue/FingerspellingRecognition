@@ -1,6 +1,7 @@
 import pickle
 
 from sklearn.decomposition import PCA
+from sklearn.externals import joblib
 from sklearn.preprocessing import StandardScaler
 
 
@@ -26,11 +27,9 @@ def get_scaler(data):
 
 def extract_features(descriptor, scaler_file: str, extractor_file):
     if extract_features.scaler is None:
-        with open(scaler_file, 'wb') as f:
-            extract_features.scaler = pickle.load(f)
+        extract_features.scaler = joblib.load(scaler_file)
     if extract_features.extractor is None:
-        with open(extractor_file, 'wb') as f:
-            extract_features.extractor = pickle.load(f)
+        extract_features.extractor = joblib.load(extractor_file)
 
     descriptor_scaled = extract_features.scaler.transform(descriptor)
     return extract_features.extractor.transform(descriptor_scaled)

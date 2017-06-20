@@ -12,8 +12,8 @@ classif_file = '../../resource/models/classif.pkl'
 # Reads dataset, trains models and stores them on file system
 data, labels = gendata_sign(get_paths_tm(dir_dataset=dir_dataset), 2000)
 scaler = get_scaler(data)
-extractor = get_extractor(data)
 data = scaler.transform(data)
+extractor = get_extractor(data)
 data = extractor.transform(data)
 classif = SignClassifier()
 classif.train(data, labels)

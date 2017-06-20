@@ -5,7 +5,7 @@ from classification.SkinClassifier import SkinClassifier
 from daq.DatasetGenerator import gendata_sign, gendata_skin
 from daq.ImReader import get_paths_tm
 from evaluation.methods import hold_out_eval, crossval
-from representation.FeatureExtraction import pca_transform
+from representation.FeatureExtraction import pca_fit_transform
 
 
 def SignClassifierTest():
@@ -15,7 +15,7 @@ def SignClassifierTest():
     data, labels = gendata_sign(get_paths_tm(dir_dataset='../../resource/dataset/tm'
                                              ), n_data)
 
-    data = pca_transform(data)
+    data = pca_fit_transform(data)
     # data = get_dissim_rep(data)
     print("Dimension after PCA: " + str(data.shape[1]))
     classif = SignClassifier()

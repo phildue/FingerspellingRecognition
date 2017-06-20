@@ -34,7 +34,7 @@ def vectorize(descriptor_lists, dim, sample_size):
     index = 0
     for class_, letter in enumerate(sorted(descriptor_lists.keys()), 1):
         for n, descriptor in enumerate(descriptor_lists[letter]):
-            data[index, :] = descriptor.reshape(1, dim)
+            data[index, :] = descriptor
             labels[index] = class_
             index += 1
 

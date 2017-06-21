@@ -3,6 +3,7 @@ import imutils
 from sklearn.externals import joblib
 
 from classification.models.ColourModel import ColourModel
+from classification.models.ShapeModel import ShapeModel
 from daq.cam.InputGenerator import InputGenerator
 from daq.preprocessing import extract_descriptor
 
@@ -33,9 +34,8 @@ class InputHandler:
 
             inputgen = InputGenerator(0.5)
             colour_model = ColourModel()
-
-            model = joblib.load('../../../resource/models/model.pkl')
-
+            shape_model = ShapeModel('../../../resource/models/model.pkl')
+            descriptor_stack = []
             # keep looping, until interrupted
             while True:
                 # get the current frame
@@ -67,8 +67,6 @@ class InputHandler:
                     return
                 gray = cv2.GaussianBlur(gray, (7, 7), 0)
 
-                edges = None
-
                 # to get the background, keep looking till a threshold is reached
                 # so that our running average model gets calibrated
                 if self.num_frames < 30:
@@ -76,24 +74,25 @@ class InputHandler:
                 elif not colour_model.trained:
                     colour_model.train(inputgen.background, roi)
                     print("Calibrated ..")
-                elif (self.num_frames - 30) % 50 == 0:
+                else:
                     # segment the hand region
                     hand = colour_model.segment(roi)
                     hand_gray = cv2.cvtColor(hand, cv2.COLOR_RGB2GRAY)
                     # extract descriptor
-                    descriptor = extract_descriptor(hand_gray)
-                    # classify
-                    class_ = model.predict(descriptor)
-                    # print output
-                    print("Detected Letter " + str(letters[int(class_) - 1]))
-                    print("Actual Letter: " + 'a')
+                    descriptor_stack.append(extract_descriptor(hand_gray))
+                    if (self.num_frames - 30) % 50 == 0:
+                        # every X frames classify them and apply majority vote
+                        class_ = shape_model.predict(descriptor_stack)
+                        # print output
+                        print("Detected Letter " + str(letters[int(class_) - 1]))
+                        print("Actual Letter: " + 'a')
+                        descriptor_stack = []
 
                 # draw the segmented hand
                 cv2.rectangle(clone, (self.roi_left, self.roi_top), (self.roi_right, self.roi_bottom), (0, 255, 0), 2)
 
                 # display the frame with segmented hand
                 cv2.imshow("Video Feed", clone)
-
 
                 # increment the number of frames
                 self.num_frames += 1

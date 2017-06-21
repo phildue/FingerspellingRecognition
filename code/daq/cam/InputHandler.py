@@ -2,9 +2,9 @@ import cv2
 import imutils
 from sklearn.externals import joblib
 
-from classification.ColourModel import ColourModel
+from classification.models.ColourModel import ColourModel
 from daq.cam.InputGenerator import InputGenerator
-from daq.dataset.preprocessing import extract_descriptor
+from daq.preprocessing import extract_descriptor
 
 letters = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t",
            "u",

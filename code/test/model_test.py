@@ -4,7 +4,7 @@ import cv2
 from sklearn.externals import joblib
 
 from daq.dataset.fileaccess import read_image
-from daq.dataset.preprocessing import preprocess, extract_descriptor
+from daq.preprocessing import preprocess, extract_descriptor
 # init
 from exceptions.exceptions import NoRoiFound
 

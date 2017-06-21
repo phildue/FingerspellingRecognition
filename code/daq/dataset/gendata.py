@@ -1,7 +1,7 @@
 import numpy as np
 
 from daq.dataset.fileaccess import read_letters
-from daq.dataset.preprocessing import extract_descriptors, preprocesss
+from daq.preprocessing import extract_descriptors, preprocesss
 
 
 def gendata_sign(img_file_paths,

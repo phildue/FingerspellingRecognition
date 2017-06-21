@@ -1,7 +1,7 @@
 import cv2
 import numpy as np
 
-from daq.dataset.hog import get_hog
+from daq.hog import get_hog
 from exceptions.exceptions import NoRoiFound, NoContoursFound
 
 

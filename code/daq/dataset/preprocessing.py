@@ -1,6 +1,7 @@
 import cv2
 import numpy as np
 
+from daq.dataset.hog import get_hog
 from exceptions.exceptions import NoRoiFound, NoContoursFound
 
 
@@ -9,7 +10,7 @@ def extract_descriptors(imgs):
 
 
 def extract_descriptor(img):
-    return img.reshape(1, img.size)
+    return get_hog(img)
 
 
 def preprocesss(imgs: [np.array], im_size=(100, 120), roi_size=(30, 30)) -> [np.array]:
@@ -31,7 +32,7 @@ def preprocess(img: np.array, im_size=(100, 120), roi_size=(30, 30)) -> np.array
 
     roi = get_roi(img_resized)
     roi = cv2.resize(roi, roi_size)
-    roi = cv2.Canny(roi, threshold1=50, threshold2=100)
+    # roi = cv2.Canny(roi, threshold1=50, threshold2=100)
 
     return roi
 

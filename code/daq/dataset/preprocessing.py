@@ -1,6 +1,7 @@
 import cv2
 import numpy as np
 
+from daq.dataset.hog import get_hog
 from exceptions.exceptions import NoRoiFound, NoContoursFound
 
 
@@ -9,9 +10,8 @@ def extract_descriptors(imgs):
 
 
 def extract_descriptor(img):
-    hog = cv2.HOGDescriptor()
-    padding = (2, 2)
-    return hog.compute(img, winStride=(8, 8), padding=padding, locations=[(15, 15)])
+    return get_hog(img)
+
 
 def preprocesss(imgs: [np.array], im_size=(100, 120), roi_size=(30, 30)) -> [np.array]:
     img_pp = []

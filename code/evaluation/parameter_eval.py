@@ -2,7 +2,7 @@ import numpy as np
 from daq.datageneration.ImReader import get_paths_tm
 from representation.FeatureExtraction import pca_fit_transform
 
-from classification.model import SignClassifier
+from classification.pipe import SignClassifier
 from daq.dataset.gendata import gendata_sign
 from evaluation.methods import crossval
 

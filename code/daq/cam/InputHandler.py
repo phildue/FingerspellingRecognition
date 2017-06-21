@@ -1,9 +1,10 @@
 import cv2
 import imutils
 from sklearn.externals import joblib
+
+from classification.ColourModel import ColourModel
 from daq.cam.InputGenerator import InputGenerator
 from daq.dataset.preprocessing import extract_descriptor
-
 
 letters = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t",
            "u",
@@ -31,6 +32,8 @@ class InputHandler:
             self.num_frames = 0
 
             inputgen = InputGenerator(0.5)
+            colour_model = ColourModel()
+
             model = joblib.load('../../../resource/models/model.pkl')
 
             # keep looping, until interrupted
@@ -70,20 +73,20 @@ class InputHandler:
                 # so that our running average model gets calibrated
                 if self.num_frames < 30:
                     inputgen.run_avg(gray)
-                else:
-                    if (self.num_frames - 30) % 50 == 0:
-                        # segment the hand region
-                        hand = inputgen.get_foreground(gray)
-
-                        # check whether hand region is segmented
-                        if hand is not None:
-                            # if yes, unpack the thresholded image and
-                            # segmented region
-                            (edges, segmented) = hand
-
-                            # draw the segmented region and display the frame
-                            cv2.drawContours(clone, [segmented + (self.roi_right, self.roi_top)], -1, (0, 0, 255))
-                            cv2.imshow("Hand Contour", edges)
+                elif not colour_model.trained:
+                    colour_model.train(inputgen.background, roi)
+                    print("Calibrated ..")
+                elif (self.num_frames - 30) % 50 == 0:
+                    # segment the hand region
+                    hand = colour_model.segment(roi)
+                    hand_gray = cv2.cvtColor(hand, cv2.COLOR_RGB2GRAY)
+                    # extract descriptor
+                    descriptor = extract_descriptor(hand_gray)
+                    # classify
+                    class_ = model.predict(descriptor)
+                    # print output
+                    print("Detected Letter " + str(letters[int(class_) - 1]))
+                    print("Actual Letter: " + 'a')
 
                 # draw the segmented hand
                 cv2.rectangle(clone, (self.roi_left, self.roi_top), (self.roi_right, self.roi_bottom), (0, 255, 0), 2)
@@ -91,18 +94,6 @@ class InputHandler:
                 # display the frame with segmented hand
                 cv2.imshow("Video Feed", clone)
 
-                if edges is not None:
-                    imagein = edges.copy()
-                    im_size = (30, 30)
-                    imagein = cv2.resize(imagein, im_size)
-
-                    # extract descriptor
-                    descriptor = extract_descriptor(imagein)
-                    # classify
-                    class_ = model.predict(descriptor)
-                    # print output
-                    print("Detected Letter " + str(letters[int(class_) - 1]))
-                    print("Actual Letter: " + 'a')
 
                 # increment the number of frames
                 self.num_frames += 1

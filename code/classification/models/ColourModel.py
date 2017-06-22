@@ -32,7 +32,7 @@ class ColourModel:
     def segment(self, image):
         if not self.trained:
             raise NotTrained
-        superpixels = slic(image, n_segments=300)
+        superpixels = slic(image, n_segments=500)
         assignments = np.zeros(shape=image.shape[0:2])
         for i in range(0, len(superpixels)):
             if len(image[superpixels == i]) > 0:

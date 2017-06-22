@@ -83,15 +83,12 @@ class InputHandler:
                     hand = colour_model.segment(roi)
                     cv2.imshow("Segmented Hand", hand)
 
-                #                    hand_gray = cv2.cvtColor(hand, cv2.COLOR_RGB2GRAY)
-                    # extract descriptor
-                #                    shape_model.stack_descr(extract_descriptor(hand_gray))
-                #                    if (self.num_frames - 30) % 50 == 0:
-                        # every X frames classify them and apply majority vote
-                #                        class_ = shape_model.predict()
-                        # print output
-                #                        print("Detected Letter " + str(letters[int(class_) - 1]))
-                #                        print("Actual Letter: " + 'a')
+                    hand_gray = cv2.cvtColor(hand, cv2.COLOR_RGB2GRAY)
+                    shape_model.stack_descr(extract_descriptor(hand_gray))
+                    if (self.num_frames - 30) % 50 == 0:
+                        # every X frames classify and apply majority vote
+                        class_ = shape_model.predict()
+                        print("Detected Letter " + str(letters[int(class_) - 1]))
 
                 # draw the segmented hand
                 cv2.rectangle(clone, (self.roi_left, self.roi_top), (self.roi_right, self.roi_bottom), (0, 255, 0), 2)

@@ -12,10 +12,13 @@ class ShapeModel:
     def __init__(self, model_path='../../resource/models/model.pkl'):
         self.model = joblib.load(model_path)
         self.trained = True
+        self.votes = np.zeros(shape=(len(self.letters)))
 
-    def predict(self, frames: [np.array]):
-        votes = np.zeros(shape=(len(self.letters)))
-        for frame in frames:
-            votes[self.model.predict(frame) - 1] += 1
+    def predict(self, ):
+        class_ = self.letters[np.argmax(self.votes)]
+        self.votes = np.zeros(shape=(len(self.letters)))
 
-        return self.letters[np.argmax(votes)]
+        return class_
+
+    def stack_descr(self, descriptor):
+        self.votes[self.model.predict(descriptor) - 1] += 1

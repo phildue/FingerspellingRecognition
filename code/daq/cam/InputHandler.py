@@ -35,9 +35,10 @@ class InputHandler:
             inputgen = InputGenerator(0.5)
             colour_model = ColourModel()
             shape_model = ShapeModel('../../../resource/models/model.pkl')
-            descriptor_stack = []
             # keep looping, until interrupted
             while True:
+                # observe the keypress by the user
+                keypress = cv2.waitKey(1) & 0xFF
                 # get the current frame
                 (grabbed, frame) = self.camera.read()
 
@@ -72,21 +73,25 @@ class InputHandler:
                 if self.num_frames < 30:
                     inputgen.run_avg(gray)
                 elif not colour_model.trained:
-                    colour_model.train(inputgen.background, roi)
-                    print("Calibrated ..")
-                else:
+                    if (self.num_frames - 30) % 100 == 0:
+                        print("Put your hand in the green box and press 'c' to calibrate.")
+                    if keypress == ord("c"):
+                        colour_model.train(inputgen.background, roi)
+                        print("Calibrated ..")
+                elif (self.num_frames - 30) % 5 == 0:
                     # segment the hand region
                     hand = colour_model.segment(roi)
-                    hand_gray = cv2.cvtColor(hand, cv2.COLOR_RGB2GRAY)
+                    cv2.imshow("Segmented Hand", hand)
+
+                #                    hand_gray = cv2.cvtColor(hand, cv2.COLOR_RGB2GRAY)
                     # extract descriptor
-                    descriptor_stack.append(extract_descriptor(hand_gray))
-                    if (self.num_frames - 30) % 50 == 0:
+                #                    shape_model.stack_descr(extract_descriptor(hand_gray))
+                #                    if (self.num_frames - 30) % 50 == 0:
                         # every X frames classify them and apply majority vote
-                        class_ = shape_model.predict(descriptor_stack)
+                #                        class_ = shape_model.predict()
                         # print output
-                        print("Detected Letter " + str(letters[int(class_) - 1]))
-                        print("Actual Letter: " + 'a')
-                        descriptor_stack = []
+                #                        print("Detected Letter " + str(letters[int(class_) - 1]))
+                #                        print("Actual Letter: " + 'a')
 
                 # draw the segmented hand
                 cv2.rectangle(clone, (self.roi_left, self.roi_top), (self.roi_right, self.roi_bottom), (0, 255, 0), 2)
@@ -96,9 +101,6 @@ class InputHandler:
 
                 # increment the number of frames
                 self.num_frames += 1
-
-                # observe the keypress by the user
-                keypress = cv2.waitKey(1) & 0xFF
 
                 # if the user pressed "q", then stop looping
                 if keypress == ord("q"):

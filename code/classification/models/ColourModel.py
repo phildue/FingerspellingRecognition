@@ -1,5 +1,6 @@
 import cv2
-from numpy import zeros, vstack, ones
+import numpy as np
+from skimage.segmentation import slic
 from sklearn.neighbors import KNeighborsClassifier
 
 from exceptions.exceptions import NotTrained
@@ -10,27 +11,34 @@ class ColourModel:
     trained = False
 
     def train(self, background, image):
-        gray = cv2.cvtColor(background, cv2.COLOR_RGB2GRAY)
+
+        gray = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
         diff = cv2.absdiff(background.astype("uint8"), gray)
-        binary = cv2.threshold(diff, 60, 255, cv2.THRESH_BINARY)
+        cv2.imshow("Roi", diff)
+        _, binary = cv2.threshold(diff, 20, 255, cv2.THRESH_BINARY)
         roi = image[binary == 255].reshape(-1, 3)
         negative = image[binary == 0].reshape(-1, 3)
-        roi_label = zeros(shape=(roi.shape[0]))
-        negative_label = ones(shape=(negative.shape[0]))
-        data = vstack((roi, negative))
-        labels = vstack((roi_label, negative_label))
+        test = image.copy()
+        test[binary == 0] = (0, 0, 0)
+        cv2.imshow("Roi", test)
+        roi_label = np.zeros(shape=(roi.shape[0], 1))
+        negative_label = np.ones(shape=(negative.shape[0], 1))
+        data = np.vstack((roi, negative))
+        labels = np.vstack((roi_label, negative_label))
         self.model = KNeighborsClassifier(3)
-        self.model.fit(data, labels)
+        self.model.fit(data, labels.ravel())
         self.trained = True
 
     def segment(self, image):
         if not self.trained:
             raise NotTrained
+        superpixels = slic(image, n_segments=300)
+        assignments = np.zeros(shape=image.shape[0:2])
+        for i in range(0, len(superpixels)):
+            if len(image[superpixels == i]) > 0:
+                mean_sp = np.mean(image[superpixels == i], axis=0)
+                assignments[superpixels == i] = self.model.predict(mean_sp.reshape(1, -1))
 
         segmented = image.copy()
-        for y in range(0, image.shape[0]):
-            for x in range(0, image.shape[1]):
-                class_ = self.model.predict(image[y, x, :])
-                segmented[y, x, :] = image[y, x, :] if class_ == 1 else (0, 0, 0)
-
+        segmented[assignments == 1] = (0, 0, 0)
         return segmented

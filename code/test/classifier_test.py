@@ -5,7 +5,7 @@ from classification.pipe import get_pipe
 from daq.dataset.fileaccess import get_paths_tm
 from daq.dataset.gendata import gendata_sign
 
-n_data = 100
+n_data = 40
 data, labels = gendata_sign(get_paths_tm(dir_dataset='../../resource/dataset/tm'
                                          ), n_data)
 

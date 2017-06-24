@@ -49,20 +49,22 @@ def get_longest_contours(image, n_longest=1):
     return longest_contours
 
 
-def get_roi(img, min_roi_size=100):
+def get_roi(img, min_roi_size=50):
     _, img_binary = cv2.threshold(img, 128, 255, cv2.THRESH_BINARY)
     img_edges = cv2.Canny(img_binary, threshold1=50, threshold2=100)
     _, contours, _ = cv2.findContours(img_edges, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
 
+    contours = [c for c in contours if len(c) > 4]
     largest_contour = contours[np.argmax([cv2.contourArea(c) for c in contours])]
 
     x, y, w, h = cv2.boundingRect(largest_contour)
-    # img_roi = cv2.rectangle(img_binary, x, y, (0, 0, 255), 2, 1)
+    #
     # cv2.imshow('roi', img_roi)
     # cv2.waitKey(10000)
     roi = img[y - 1:y + h + 1, x - 1:x + w + 1]
     if roi.size < min_roi_size:
-        # cv2.imshow("Error", roi)
+        # img_roi = cv2.rectangle(img_edges, (x, y),(x+w,y-h), (0, 255, 0), 2, 1)
+        # cv2.imshow("Error", img_roi)
         # cv2.waitKey(10000)
         raise NoRoiFound()
 

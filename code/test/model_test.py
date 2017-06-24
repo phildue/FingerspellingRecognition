@@ -30,12 +30,16 @@ while cmd != 'n':
     except NoRoiFound:
         continue
     # extract descriptor
+    cv2.imshow("Cropped hand", img)
+
     descriptor = extract_descriptor(img)
+
+    print(str(descriptor))
     # classify
     class_ = model.predict(descriptor)
     # print output
-    print("Detected Letter " + str(letters[int(class_) - 1]))
+    print("Detected Letter " + letters[int(class_) - 1])
     print("Actual Letter: " + letter)
-    cv2.waitKey(0)
+    cv2.waitKey(2000)
 
     # cmd = input("Continue? [y|n]: ")

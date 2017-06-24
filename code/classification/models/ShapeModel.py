@@ -15,7 +15,9 @@ class ShapeModel:
         self.votes = np.zeros(shape=(len(self.letters)))
 
     def predict(self, ):
-        class_ = self.letters[np.argmax(self.votes)]
+        values, counts = np.unique(self.votes, return_counts=True)
+
+        class_ = self.letters[int(values[int(np.argmax(counts))])]
         self.votes = np.zeros(shape=(len(self.letters)))
 
         return class_

@@ -32,9 +32,9 @@ class ColourModel:
     def segment(self, image):
         if not self.trained:
             raise NotTrained
-        superpixels = slic(image, n_segments=500)
+        superpixels = slic(image, n_segments=600)
         assignments = np.zeros(shape=image.shape[0:2])
-        for i in range(0, len(superpixels)):
+        for i in range(0, np.max(superpixels)):
             if len(image[superpixels == i]) > 0:
                 mean_sp = np.mean(image[superpixels == i], axis=0)
                 assignments[superpixels == i] = self.model.predict(mean_sp.reshape(1, -1))

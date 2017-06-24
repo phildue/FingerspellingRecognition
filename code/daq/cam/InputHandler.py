@@ -1,11 +1,12 @@
 import cv2
 import imutils
+from numpy.ma import floor
 from sklearn.externals import joblib
 
 from classification.models.ColourModel import ColourModel
 from classification.models.ShapeModel import ShapeModel
 from daq.cam.InputGenerator import InputGenerator
-from daq.preprocessing import extract_descriptor
+from daq.preprocessing import extract_descriptor, preprocess
 
 letters = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t",
            "u",
@@ -53,7 +54,8 @@ class InputHandler:
                 (height, width) = frame.shape[:2]
 
                 # get the ROI
-                self.set_roi(width // 2, width, 0, 2 * height // 3)
+                self.set_roi(int(floor(1 / 2 * width)), int(floor(3 / 4 * width)), int(floor(1 / 3 * height)),
+                             int(floor(2 / 3 * height)))
 
                 roi = frame[self.roi_top:self.roi_bottom, self.roi_left:self.roi_right]
 
@@ -81,14 +83,16 @@ class InputHandler:
                 elif (self.num_frames - 30) % 5 == 0:
                     # segment the hand region
                     hand = colour_model.segment(roi)
-                    cv2.imshow("Segmented Hand", hand)
 
                     hand_gray = cv2.cvtColor(hand, cv2.COLOR_RGB2GRAY)
+                    hand_gray = cv2.resize(hand_gray, (30, 30))
+                    cv2.imshow("Segmented Hand", hand_gray)
+
                     shape_model.stack_descr(extract_descriptor(hand_gray))
-                    if (self.num_frames - 30) % 50 == 0:
+                    if (self.num_frames - 30) % 10 == 0:
                         # every X frames classify and apply majority vote
-                        class_ = shape_model.predict()
-                        print("Detected Letter " + str(letters[int(class_) - 1]))
+                        letter = shape_model.predict()
+                        print("Detected Letter " + letter)
 
                 # draw the segmented hand
                 cv2.rectangle(clone, (self.roi_left, self.roi_top), (self.roi_right, self.roi_bottom), (0, 255, 0), 2)

@@ -10,7 +10,7 @@ def extract_descriptors(imgs):
 
 
 def extract_descriptor(img):
-    return get_hog(img)
+    return get_hog(img).astype(dtype=np.uint8)
 
 
 def preprocesss(imgs: [np.array], im_size=(100, 120), roi_size=(30, 30)) -> [np.array]:

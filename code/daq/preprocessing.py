@@ -29,8 +29,9 @@ def preprocesss(imgs: [np.array], im_size=(100, 120), roi_size=(30, 30)) -> [np.
 def preprocess(img: np.array, im_size=(100, 120), roi_size=(30, 30)) -> np.array:
     # find roi (hand), crop it, find edges
     img_resized = cv2.resize(img, im_size)
+    img_gray = cv2.cvtColor(img_resized, cv2.COLOR_RGB2GRAY)
 
-    roi = get_roi(img_resized)
+    roi = get_roi(img_gray)
     roi = cv2.resize(roi, roi_size)
     # roi = cv2.Canny(roi, threshold1=50, threshold2=100)
 

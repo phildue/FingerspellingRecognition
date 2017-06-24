@@ -1,7 +1,7 @@
-from daq.imreader import get_paths_tm
 from sklearn.externals import joblib
 
 from classification.pipe import get_pipe
+from daq.dataset.fileaccess import get_paths_tm
 from daq.dataset.gendata import gendata_sign
 
 dir_dataset = '../../resource/dataset/tm'

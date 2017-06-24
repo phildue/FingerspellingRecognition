@@ -8,8 +8,8 @@ def get_hog_window(window, n_bins=8):
 
     bin_range = 2 * np.pi / n_bins
     bins = np.zeros(shape=(1, n_bins))
-    magn, _, _ = cv2.sqrt(dx ** 2 + dy ** 2)
-    angle, _, _ = np.arctan2(dx, dy)
+    magn = cv2.sqrt(dx ** 2 + dy ** 2)
+    angle = np.arctan2(dx, dy)
     for y in range(0, window.shape[0]):
         for x in range(0, window.shape[1]):
             angle_shift = angle[y, x]

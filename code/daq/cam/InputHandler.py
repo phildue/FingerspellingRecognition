@@ -89,7 +89,7 @@ class InputHandler:
                     cv2.imshow("Segmented Hand", hand_gray)
 
                     shape_model.stack_descr(extract_descriptor(hand_gray))
-                    if (self.num_frames - 30) % 10 == 0:
+                    if (self.num_frames - 30) % 15 == 0:
                         # every X frames classify and apply majority vote
                         letter = shape_model.predict()
                         print("Detected Letter " + letter)

@@ -8,6 +8,7 @@ class ShapeModel:
                "v", "w", "x", "y"]
     model = None
     trained = False
+    iterations = 0
 
     def __init__(self, model_path='../../resource/models/model.pkl'):
         self.model = joblib.load(model_path)
@@ -15,12 +16,14 @@ class ShapeModel:
         self.votes = np.zeros(shape=(len(self.letters)))
 
     def predict(self, ):
-        values, counts = np.unique(self.votes, return_counts=True)
-
-        class_ = self.letters[int(values[int(np.argmax(counts))])]
-        self.votes = np.zeros(shape=(len(self.letters)))
-
-        return class_
+        if np.max(self.votes) > self.iterations * 0.75:
+            class_ = self.letters[int(np.argmax(self.votes))]
+            self.votes = np.zeros(shape=(len(self.letters)))
+            self.iterations = 0
+            return class_
+        else:
+            return "No letter recognized"
 
     def stack_descr(self, descriptor):
-        self.votes[self.model.predict(descriptor) - 1] += 1
+        self.votes[self.model.predict(descriptor.astype(np.uint8)) - 1] += 1
+        self.iterations += 1

@@ -1,12 +1,11 @@
 import cv2
 import imutils
 from numpy.ma import floor
-from sklearn.externals import joblib
 
 from classification.models.ColourModelVideo import ColourModelVideo
 from classification.models.ShapeModel import ShapeModel
 from daq.cam.InputGenerator import InputGenerator
-from daq.preprocessing import extract_descriptor, preprocess
+from preprocessing.preprocessing import extract_descriptor
 
 letters = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t",
            "u",

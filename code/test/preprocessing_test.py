@@ -3,7 +3,7 @@ import random
 import cv2
 
 from daq.dataset.fileaccess import read_image
-from daq.preprocessing import preprocess, extract_descriptor
+from preprocessing.preprocessing import preprocess, extract_descriptor
 
 letters = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t",
            "u",

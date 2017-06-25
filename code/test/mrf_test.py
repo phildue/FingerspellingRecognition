@@ -3,7 +3,7 @@ import maxflow as mf
 import numpy as np
 
 from classification.models.ColourModelAsl import ColourModelAsl
-from daq.mrf import MarkovRandomField
+from preprocessing.mrf import MarkovRandomField
 
 
 def example():

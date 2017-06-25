@@ -3,11 +3,10 @@ import random
 import cv2
 from sklearn.externals import joblib
 
-from daq.dataset.fileaccess import read_image, get_paths_tm
-from daq.dataset.gendata import gendata_sign
-from daq.preprocessing import preprocess, extract_descriptor
+from daq.dataset.fileaccess import read_image
 # init
 from exceptions.exceptions import NoRoiFound
+from preprocessing.preprocessing import preprocess, extract_descriptor
 
 letters = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t",
            "u",

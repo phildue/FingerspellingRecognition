@@ -3,7 +3,7 @@ import imutils
 from numpy.ma import floor
 from sklearn.externals import joblib
 
-from classification.models.ColourModel import ColourModel
+from classification.models.ColourModelVideo import ColourModelVideo
 from classification.models.ShapeModel import ShapeModel
 from daq.cam.InputGenerator import InputGenerator
 from daq.preprocessing import extract_descriptor, preprocess
@@ -34,7 +34,7 @@ class InputHandler:
             self.num_frames = 0
 
             inputgen = InputGenerator(0.5)
-            colour_model = ColourModel()
+            colour_model = ColourModelVideo()
             shape_model = ShapeModel('../../../resource/models/model.pkl')
             # keep looping, until interrupted
             while True:

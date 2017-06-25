@@ -36,12 +36,13 @@ def read_letters(img_file_paths, sample_size, letters):
 
 
 def get_paths_asl(dir_dataset='../../../resource/dataset/fingerspelling5/dataset5/',
-                  sets=None, ):
+                  sets=None, alphabet=None):
+    if alphabet is None:
+        alphabet = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u",
+                    "v", "w", "x", "y"]
     if sets is None:
         sets = ["A", "B", "C", "D", "E"]
 
-    alphabet = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u",
-                "v", "w", "x", "y"]
     paths = {}
 
     for dir_letter in alphabet:

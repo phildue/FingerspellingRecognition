@@ -6,7 +6,7 @@ from sklearn.neighbors import KNeighborsClassifier
 from exceptions.exceptions import NotTrained
 
 
-class ColourModel:
+class ColourModelVideo:
     model = None
     trained = False
 

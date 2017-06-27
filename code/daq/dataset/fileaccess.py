@@ -16,6 +16,18 @@ def read_image(path):
     return img
 
 
+def read_image_depth(path):
+    path_depth = path.replace("color", "depth")
+    try:
+        img = cv2.imread(path_depth, 0)
+        if img is None:
+            raise FileNotFoundError("Couldn't find: " + path_depth)
+    except Exception:
+        print("Exception on reading file :" + str(path_depth))
+
+    return img
+
+
 def read_letters(img_file_paths, sample_size, letters):
     letters_random_order = letters.copy()
     random.shuffle(letters_random_order)

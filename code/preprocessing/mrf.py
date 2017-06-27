@@ -4,16 +4,23 @@ import numpy as np
 
 
 class MarkovRandomField:
-    def __init__(self, img, smoothness, labels_soft):
+    def __init__(self, shape, weights_x, weights_y, proba_foreground, proba_background):
         self.g = mf.Graph[int]()
 
-        self.nodeids = self.g.add_grid_nodes(img.shape)
+        self.nodeids = self.g.add_grid_nodes(shape)
 
-        self.g.add_grid_edges(self.nodeids, smoothness)
-        self.g.add_grid_tedges(self.nodeids, labels_soft, 255 - labels_soft)
+        self.g.add_grid_edges(self.nodeids, weights_y, structure=np.array([0, 0, 0,
+                                                                           0, 0, 0,
+                                                                           0, 1, 0]))
+
+        self.g.add_grid_edges(self.nodeids, weights_x, structure=np.array([0, 0, 0,
+                                                                           0, 0, 1,
+                                                                           0, 0, 0]))
+
+        self.g.add_grid_tedges(self.nodeids, proba_foreground, proba_background)
 
     def maxflow(self):
         self.g.maxflow()
         sgm = self.g.get_grid_segments(self.nodeids)
         labels_obtained = np.int_(np.logical_not(sgm))
-        return labels_obtained * 255
+        return labels_obtained

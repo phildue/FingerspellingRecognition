@@ -5,7 +5,7 @@ from numpy.ma import floor
 from classification.models.ColourModelVideo import ColourModelVideo
 from classification.models.ShapeModel import ShapeModel
 from daq.cam.InputGenerator import InputGenerator
-from preprocessing.preprocessing import extract_descriptor
+from preprocessing.segmentation_tm import extract_descriptor
 
 letters = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t",
            "u",

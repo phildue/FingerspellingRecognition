@@ -16,6 +16,10 @@ def read_image(path):
     return img
 
 
+def read_image_asl(path):
+    return read_image(path), read_image_depth(path)
+
+
 def read_image_depth(path):
     path_depth = path.replace("color", "depth")
     try:
@@ -41,7 +45,7 @@ def read_letters(img_file_paths, sample_size, letters):
             print("Too many samples requested for [" + letter + "], taking all: " + str(len(path_sel)))
 
         for sel_samples, path in enumerate(path_sel):
-            img = read_image(path)
+            img = read_image_asl(path)
             letter_imgs[letter].append(img)
 
     return letter_imgs

@@ -24,7 +24,8 @@ def get_smooth_grid(img):
 
 def get_background_score(img, background):
     background_score_grid = np.zeros(shape=(background.shape[0], background.shape[1], 2))
-    background_score_grid[:, :, 0] = np.abs(img - background) / img
+    background_score_grid[:, :, 0] = np.abs(img - background)
+    background_score_grid[:, :, 0] /= np.max(background_score_grid[:, :, 0])
     background_score_grid[:, :, 1] = 1 - background_score_grid[:, :, 0]
 
     return background_score_grid

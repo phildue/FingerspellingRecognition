@@ -2,6 +2,7 @@ import cv2
 import numpy as np
 
 from exceptions.exceptions import NoRoiFound
+from preprocessing.bag_of_hogs import get_boh_descriptor
 from preprocessing.hog import get_hog
 from preprocessing.segmentation import segment_asl
 
@@ -11,7 +12,7 @@ def extract_descriptors(imgs):
 
 
 def extract_descriptor(img):
-    return get_hog(img).astype(dtype=np.uint8).reshape(1, -1)
+    return get_boh_descriptor(img, '../../resource/models/codebook.pkl').reshape(1, -1)
 
 
 def preprocesss(imgs: [(np.array, np.array)], roi_size=(60, 60)) -> [np.array]:

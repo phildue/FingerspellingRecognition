@@ -2,7 +2,7 @@ import numpy as np
 from numpy.linalg import norm, inv
 from scipy.stats import entropy
 
-from preprocessing.colourhist import colour_hist, kl_divergence
+from preprocessing.color_hist import colour_hist, kl_divergence
 
 
 class ColourModelAsl:

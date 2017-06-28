@@ -29,8 +29,8 @@ def gendata_sign(img_file_paths,
 
 
 def vectorize(descriptor_lists, dim, sample_size):
-    data = np.zeros(shape=(sample_size, dim), dtype=np.uint8)
-    labels = np.zeros(shape=(sample_size, 1), dtype=np.uint8)
+    data = np.zeros(shape=(sample_size, dim), dtype=np.float)
+    labels = np.zeros(shape=(sample_size, 1), dtype=np.float)
     index = 0
     for class_, letter in enumerate(sorted(descriptor_lists.keys()), 1):
         for n, descriptor in enumerate(descriptor_lists[letter]):

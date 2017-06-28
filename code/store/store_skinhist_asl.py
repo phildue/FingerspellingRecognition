@@ -4,7 +4,7 @@ from numpy.linalg import norm
 from numpy.ma import floor
 
 from daq.dataset.fileaccess import get_paths_asl, read_image
-from preprocessing.colourhist import colour_hist
+from preprocessing.color_hist import colour_hist
 
 paths_dict = get_paths_asl(sets=["E"], alphabet=["a"])
 winsize = 3

@@ -8,5 +8,5 @@ def get_pipe():
     scaler = StandardScaler()
     extractor = PCA(0.9, svd_solver="full")
     classifier = SVC()
-    pipe = Pipeline(steps=[('scaler', scaler), ('pca', extractor), ('clf', classifier)])
+    pipe = Pipeline(steps=[('clf', classifier)])
     return pipe

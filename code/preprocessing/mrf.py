@@ -9,12 +9,12 @@ class MarkovRandomField:
 
         self.nodeids = self.g.add_grid_nodes(shape)
 
-        self.g.add_grid_edges(self.nodeids, weights_y, structure=np.array([0, 0, 0,
+        self.g.add_grid_edges(self.nodeids, weights_y, structure=np.array([0, 1, 0,
                                                                            0, 0, 0,
                                                                            0, 1, 0]))
 
         self.g.add_grid_edges(self.nodeids, weights_x, structure=np.array([0, 0, 0,
-                                                                           0, 0, 1,
+                                                                           1, 0, 1,
                                                                            0, 0, 0]))
 
         self.g.add_grid_tedges(self.nodeids, proba_foreground, proba_background)

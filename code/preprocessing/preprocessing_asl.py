@@ -4,7 +4,6 @@ import numpy as np
 from exceptions.exceptions import NoRoiFound
 from preprocessing.hog import get_hog
 from preprocessing.segmentation import segment_asl
-from preprocessing.segmentation_tm import get_roi
 
 
 def extract_descriptors(imgs):
@@ -12,15 +11,15 @@ def extract_descriptors(imgs):
 
 
 def extract_descriptor(img):
-    return get_hog(img).astype(dtype=np.uint8)
+    return get_hog(img).astype(dtype=np.uint8).reshape(1, -1)
 
 
-def preprocesss(imgs: [(np.array, np.array)], im_size=(100, 120), roi_size=(30, 30)) -> [np.array]:
+def preprocesss(imgs: [(np.array, np.array)], roi_size=(60, 60)) -> [np.array]:
     img_pp = []
     error_roi = 0
     for img in imgs:
         try:
-            img_pp.append(preprocess(img, im_size, roi_size))
+            img_pp.append(preprocess(img, roi_size))
         except NoRoiFound:
             error_roi += 1
     if error_roi > 0:
@@ -28,7 +27,7 @@ def preprocesss(imgs: [(np.array, np.array)], im_size=(100, 120), roi_size=(30, 
     return img_pp
 
 
-def preprocess(img: (np.array, np.array), im_size=(100, 120), roi_size=(30, 30)) -> np.array:
+def preprocess(img: (np.array, np.array), roi_size=(60, 60)) -> np.array:
     # find roi (hand), crop it, find edges
     img_segment = segment_asl(img[0], img[1])
     img_segment = cv2.cvtColor(img_segment, cv2.COLOR_RGB2GRAY)

@@ -3,8 +3,8 @@ import numpy as np
 
 
 def get_hog_window(window, n_bins=8):
-    dx = cv2.Sobel(window, cv2.CV_32F, 1, 0, ksize=5)
-    dy = cv2.Sobel(window, cv2.CV_32F, 0, 1, ksize=5)
+    dx = cv2.Sobel(window, cv2.CV_32F, 1, 0, ksize=3)
+    dy = cv2.Sobel(window, cv2.CV_32F, 0, 1, ksize=3)
 
     bin_range = 2 * np.pi / n_bins
     bins = np.zeros(shape=(1, n_bins))
@@ -20,16 +20,16 @@ def get_hog_window(window, n_bins=8):
     return bins
 
 
-def get_hog(img, win_size=3, n_bins=8, padding=1):
-    padded_img = cv2.copyMakeBorder(img, padding, padding, padding, padding, cv2.BORDER_WRAP)
-    windows = img.shape[0] / win_size * img.shape[1] / win_size
+def get_hog(img, win_size=3, n_bins=8):
+    step = int(np.floor(win_size / 2))
+    padded_img = cv2.copyMakeBorder(img, step, step, step, step, cv2.BORDER_WRAP)
+    windows = int(np.floor(img.shape[0] / win_size) * np.floor(img.shape[1] / win_size))
     hog = np.zeros(shape=(windows, n_bins))
     w_i = 0
-    step = np.floor(win_size / 2)
-    for y in range(padding, img.shape[0], win_size):
-        for x in range(padding, img.shape[1], win_size):
+    for y in range(step, img.shape[0], win_size):
+        for x in range(step, img.shape[1], win_size):
             hog[w_i, :] = get_hog_window(
                 padded_img[y - step:y + step + 1, x - step:x + step + 1], n_bins)
             w_i += 1
 
-    return hog.reshape(1, windows * n_bins)
+    return hog

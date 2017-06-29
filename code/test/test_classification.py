@@ -5,7 +5,7 @@ from classification.pipe import get_pipe
 from daq.fileaccess import get_paths_asl
 from daq.gendata import gendata_sign, load_data_sign
 
-n_data = 20
+n_data = 2500
 data, labels = load_data_sign('../../resource/models/descriptors.pkl', '../../resource/models/labels.pkl', n_data)
 
 model = get_pipe()

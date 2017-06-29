@@ -3,7 +3,7 @@ import threading
 from app.FrameHandler import FrameHandler
 from app.UserInterface import UserInterface
 
-frame_handler = FrameHandler()
+frame_handler = FrameHandler("../../resource/models/model.pkl")
 
 frame_handler_thread = threading.Thread(target=frame_handler.run(), args=())
 

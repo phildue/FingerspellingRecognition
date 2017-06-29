@@ -16,10 +16,13 @@ class FrameHandler:
     detected_letter = None
     s_ready_to_calibrate = s_calibrate = s_calibrated = s_letter = s_running = threading.Lock()
 
+    def __init__(self, hog_model_path):
+        self.inputgen = InputGenerator(0.5)
+        self.colour_model = MRFSegmenter()
+        self.shape_model = HogEstimator(hog_model_path)
+
     def run(self):
-        inputgen = InputGenerator(0.5)
-        colour_model = MRFSegmenter()
-        shape_model = HogEstimator('../../../resource/models/model.pkl')
+
         num_frames = 0
         self.s_running.acquire()
         while self.running:
@@ -31,30 +34,30 @@ class FrameHandler:
 
             # to get the background, keep looking till a threshold is reached
             # so that our running average model gets calibrated
-            if not colour_model.trained:
+            if not self.colour_model.trained:
                 if num_frames < 30:
-                    inputgen.run_avg(gray)
-                elif not colour_model.trained:
+                    self.inputgen.run_avg(gray)
+                elif not self.colour_model.trained:
                     self.s_ready_to_calibrate.release()
                 self.s_calibrate.acquire()
                 if self.calibrate:
                     self.s_calibrate.release()
-                    colour_model.train(inputgen.background, frame)
+                    self.colour_model.train(self.inputgen.background, frame)
                     self.s_calibrated.acquire()
                     self.calibrated = True
                     self.s_calibrated.release()
             else:
                 # segment the hand region
-                hand = colour_model.segment(frame)
+                hand = self.colour_model.segment(frame)
 
                 hand_gray = cv2.cvtColor(hand, cv2.COLOR_RGB2GRAY)
                 hand_gray = cv2.resize(hand_gray, (30, 30))
                 cv2.imshow("Segmented Hand", hand_gray)
 
-                shape_model.stack_descr(extract_descriptor(hand_gray))
+                self.shape_model.stack_descr(extract_descriptor(hand_gray))
                 if (num_frames - 30) % 15 == 0:
                     # every X frames classify and apply majority vote
-                    letter = shape_model.predict()
+                    letter = self.shape_model.predict()
                     self.s_letter.acquire()
                     self.detected_letter = letter
                     self.s_letter.release()

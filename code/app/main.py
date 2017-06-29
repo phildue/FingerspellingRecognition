@@ -7,5 +7,4 @@ ui = UserInterface(frame_handler)
 
 frame_handler.daemon = True
 frame_handler.start()
-
 ui.run()

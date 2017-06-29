@@ -71,6 +71,10 @@ class UserInterface:
                     print("Calibrated..")
                     calibrated_print_flag = True
 
+                if keypress == ord('c') and \
+                        self.frame_handler.is_ready_to_calibrate() and not self.frame_handler.is_calibrated():
+                    self.frame_handler.start_calibration()
+
                 # print letter
                 if self.frame_handler.is_calibrated():
                     letter = self.frame_handler.get_letter()
@@ -79,11 +83,7 @@ class UserInterface:
                     else:
                         print("Recognized letter: " + letter)
 
-
-
             # free up memory
             self.camera.release()
-            self.frame_handler.stop()
+            self.frame_handler.stop_()
             cv2.destroyAllWindows()
-
-

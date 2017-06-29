@@ -11,25 +11,23 @@ from preprocessing.preprocessing_asl import extract_descriptor
 
 class FrameHandler(threading.Thread):
     frame_queue = Queue()
-    running = True
-    calibrate = ready_to_calibrate = calibrated = False
+    calibrate = threading.Event()
+    ready_to_calibrate = threading.Event()
+    calibrated = threading.Event()
+    stop_ = threading.Event()
+    s_letter = threading.Lock()
     detected_letter = None
-    s_ready_to_calibrate = s_calibrate = s_calibrated = s_letter = s_running = threading.Lock()
 
     def __init__(self, hog_model_path):
         threading.Thread.__init__(self)
         self.inputgen = InputGenerator(0.5)
         self.colour_model = MRFSegmenter()
         self.shape_model = HogEstimator(hog_model_path)
-        self.s_ready_to_calibrate.acquire(True)
-        self.s_calibrated.acquire(True)
 
     def run(self):
 
         num_frames = 0
-        self.s_running.acquire(True)
-        while self.running:
-            self.s_running.release(True)
+        while not self.stop_.is_set():
             frame = self.frame_queue.get(True)
             # convert the roi to grayscale and blur it
             gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
@@ -41,12 +39,10 @@ class FrameHandler(threading.Thread):
                 if num_frames < 30:
                     self.inputgen.run_avg(gray)
                 elif not self.colour_model.trained:
-                    self.s_ready_to_calibrate.release(True)
-                self.s_calibrate.acquire(True)
-                if self.calibrate:
-                    self.s_calibrate.release(True)
+                    self.ready_to_calibrate.set()
+                    self.calibrate.wait()
                     self.colour_model.train(self.inputgen.background, frame)
-                    self.s_calibrated.release(True)
+                    self.calibrated.set()
             else:
                 # segment the hand region
                 hand = self.colour_model.segment(frame)
@@ -64,31 +60,26 @@ class FrameHandler(threading.Thread):
                     self.s_letter.release()
             # increment the number of frames
             num_frames += 1
-            self.s_running.acquire(True)
 
     def start_calibration(self):
-        if self.s_calibrate.acquire(False):
-            self.calibrate = True
-            self.s_calibrate.release(False)
+        self.calibrate.set()
 
     def stop(self):
-        self.s_running.acquire(True)
-        self.running = False
-        self.s_running.release()
+        self.stop_.set()
 
     def get_letter(self):
         if self.s_letter.acquire(False):
-            letter = self.detected_letter.copy()
+            letter = self.detected_letter
             self.s_letter.release()
             return letter
         else:
             return None
 
     def is_ready_to_calibrate(self):
-        return self.s_ready_to_calibrate.acquire(False)
+        return self.ready_to_calibrate.is_set()
 
     def is_calibrated(self):
-        return self.s_ready_to_calibrate.acquire(False)
+        return self.calibrated.is_set()
 
     def add_frame(self, frame):
         self.frame_queue.put(frame, block=False)

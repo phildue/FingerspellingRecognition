@@ -2,7 +2,6 @@ import cv2
 import numpy as np
 
 from exceptions.exceptions import NoRoiFound
-from preprocessing.bag_of_hogs import get_boh_descriptor
 from preprocessing.hog import get_hog
 from preprocessing.segmentation import segment_asl
 

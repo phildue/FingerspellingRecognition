@@ -1,8 +1,8 @@
-from daq.dataset.fileaccess import get_paths_asl
 from numpy import mean, std
 from sklearn.model_selection import cross_val_score
 
 from classification.pipe import get_pipe
+from daq.fileaccess import get_paths_asl
 from daq.gendata import gendata_sign
 
 n_data = 2500

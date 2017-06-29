@@ -19,8 +19,8 @@ def get_smooth_grid(img):
     dy = cv2.Sobel(img_gray, -1, 1, 0, ksize=3)
     dy = np.abs(dy)
     dy[dy < 20] = 0
-    wx = -cv2.normalize(d_x.astype('float'), None, 0.0, 255.0, cv2.NORM_MINMAX)
-    wy = -cv2.normalize(d_y.astype('float'), None, 0.0, 255.0, cv2.NORM_MINMAX)
+    wx = -cv2.normalize(dx.astype('float'), None, 0.0, 255.0, cv2.NORM_MINMAX)
+    wy = -cv2.normalize(dy.astype('float'), None, 0.0, 255.0, cv2.NORM_MINMAX)
     return wx, wy
 
 

@@ -3,7 +3,7 @@ import imutils
 from classification.models.MrfSegmenter import MRFSegmenter
 from numpy.ma import floor
 
-from app.cam.InputGenerator import InputGenerator
+from app.models.BackgroundSubtractor import InputGenerator
 from app.models.HogEstimator import HogEstimator
 from preprocessing.segmentation_tm import extract_descriptor
 
@@ -32,9 +32,6 @@ class InputHandler:
             self.camera = cv2.VideoCapture(0)
             self.num_frames = 0
 
-            inputgen = InputGenerator(0.5)
-            colour_model = MRFSegmenter()
-            shape_model = HogEstimator('../../../resource/models/model.pkl')
             # keep looping, until interrupted
             while True:
                 # observe the keypress by the user
@@ -62,45 +59,18 @@ class InputHandler:
                     print("roi is null")
                     return
 
-                # convert the roi to grayscale and blur it
-                gray = cv2.cvtColor(roi, cv2.COLOR_BGR2GRAY)
-                if gray is None:
-                    print("gray is null")
-                    return
-                gray = cv2.GaussianBlur(gray, (7, 7), 0)
+                # pass frame to frame handler
 
-                # to get the background, keep looking till a threshold is reached
-                # so that our running average model gets calibrated
-                if self.num_frames < 30:
-                    inputgen.run_avg(gray)
-                elif not colour_model.trained:
-                    if (self.num_frames - 30) % 100 == 0:
-                        print("Put your hand in the green box and press 'c' to calibrate.")
-                    if keypress == ord("c"):
-                        colour_model.train(inputgen.background, roi)
-                        print("Calibrated ..")
-                elif (self.num_frames - 30) % 5 == 0:
-                    # segment the hand region
-                    hand = colour_model.segment(roi)
 
-                    hand_gray = cv2.cvtColor(hand, cv2.COLOR_RGB2GRAY)
-                    hand_gray = cv2.resize(hand_gray, (30, 30))
-                    cv2.imshow("Segmented Hand", hand_gray)
-
-                    shape_model.stack_descr(extract_descriptor(hand_gray))
-                    if (self.num_frames - 30) % 15 == 0:
-                        # every X frames classify and apply majority vote
-                        letter = shape_model.predict()
-                        print("Detected Letter " + letter)
+                if keypress == ord("c"):
+                    print("Calibrated ..")
 
                 # draw the segmented hand
-                cv2.rectangle(clone, (self.roi_left, self.roi_top), (self.roi_right, self.roi_bottom), (0, 255, 0), 2)
+                cv2.rectangle(clone, (self.roi_left, self.roi_top), (self.roi_right, self.roi_bottom), (0, 255, 0),
+                              2)
 
                 # display the frame with segmented hand
                 cv2.imshow("Video Feed", clone)
-
-                # increment the number of frames
-                self.num_frames += 1
 
                 # if the user pressed "q", then stop looping
                 if keypress == ord("q"):

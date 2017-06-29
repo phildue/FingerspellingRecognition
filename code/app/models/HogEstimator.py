@@ -22,7 +22,7 @@ class HogEstimator:
             self.iterations = 0
             return class_
         else:
-            return "No letter recognized"
+            return None
 
     def stack_descr(self, descriptor):
         self.votes[self.model.predict(descriptor.astype(np.uint8)) - 1] += 1

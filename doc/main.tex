@@ -1,0 +1,270 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%2345678901234567890123456789012345678901234567890123456789012345678901234567890
+%        1         2         3         4         5         6         7         8
+
+\documentclass[letterpaper, 10 pt, conference]{ieeeconf}  % Comment this line out
+                                                          % if you need a4paper
+%\documentclass[a4paper, 10pt, conference]{ieeeconf}      % Use this line for a4
+                                                          % paper
+
+\IEEEoverridecommandlockouts                              % This command is only
+                                                          % needed if you want to
+                                                          % use the \thanks command
+\overrideIEEEmargins
+% See the \addtolength command later in the file to balance the column lengths
+% on the last page of the document
+
+
+
+
+% The following packages can be found on http:\\www.ctan.org
+\usepackage{graphics} % for pdf, bitmapped graphics files
+\usepackage{epsfig} % for postscript graphics files
+\usepackage{mathptmx} % assumes new font selection scheme installed
+\usepackage{times} % assumes new font selection scheme installed
+\usepackage{amsmath} % assumes amsmath package installed
+\usepackage{amssymb}  % assumes amsmath package installed
+\usepackage{hyperref}
+\title{\LARGE \bf
+Recognition of Fingerspelling in Real-time Video Sequence
+}
+
+%\author{ \parbox{3 in}{\centering Huibert Kwakernaak*
+%         \thanks{*Use the $\backslash$thanks command to put information here}\\
+%         Faculty of Electrical Engineering, Mathematics and Computer Science\\
+%         University of Twente\\
+%         7500 AE Enschede, The Netherlands\\
+%         {\tt\small h.kwakernaak@autsubmit.com}}
+%         \hspace*{ 0.5 in}
+%         \parbox{3 in}{ \centering Pradeep Misra**
+%         \thanks{**The footnote marks may be inserted manually}\\
+%        Department of Electrical Engineering \\
+%         Wright State University\\
+%         Dayton, OH 45435, USA\\
+%         {\tt\small pmisra@cs.wright.edu}}
+%}
+
+\author{Aniket Dhar$^{1}$ and Philipp Duernay$^{2}$% <-this % stops a space
+\thanks{$^{1}$Aniket Dhar PUT STUDENTNO}%
+\thanks{$^{2}$Philipp Duernay - 4622227 - p.durnay@student.tudelft.nl}%
+}
+
+
+
+
+\begin{document}
+
+
+
+\maketitle
+\thispagestyle{empty}
+\pagestyle{empty}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{abstract}
+
+TODO
+
+\end{abstract}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{INTRODUCTION}
+
+The accuracy of modern computer vision systems enables a wide range of applications for computers to support society, not only in our daily-life activities, but also in health care or even safety-critical situations. Detection of diseases, cruise control and pedestrian detection are only a few examples to name. 
+
+In this project we explore another possible application for computer vision: the recognition of sign language. As a final goal one can image a smartphone app which translates sign language in real-time enabling a normal conversation between deaf and hearing people.
+
+As a first start in that direction we start by recognizing the fingerspelling alphabet as shown in \autoref{fig:abc}. We implement and evaluate a computer vision system that can detect the static gestures of this alphabet\footnote{Letter J and Z involve movement and are not part of this project} in a video sequence in real-time. 
+
+\begin{figure}[hb]
+\centering
+\includegraphics[width=0.8\linewidth]{abc.png}
+\caption{American Fingerspelling Alphabet}
+\label{fig:abc}
+\end{figure}
+
+For that we build a classification system and train it on a dataset of static images. As a proof of concept we embed the obtained model in a small application. The application reads a video stream from the webcam, segments the hand of the user and shows the recognized letter.
+
+For computer vision applications one can make use of a lot of tools and libraries that are already implemented. In this project we use \textit{python3} together with the \textit{scikit} library and \textit{OpenCV}. 
+
+\textit{OpenCV} is used to read and show images, as well as to apply simple operations like thresholding, filtering etc. on a whole image efficiently. From \textit{scikit} we take classifiers, certain data operations like scaling and dimension reduction as well as methods to evaluate the classification system.
+
+A part from the general framework of the application, the focus of our implementation was on obtaining the image descriptors. Therefore we implemented a method to obtain the histogram of gradients [REF TO PAPER], as well as a bag-of-hogs representation. Also we implemented most parts of the video frame segmentation namely the background subtraction and the markov random field.
+
+The project has been carried out in context of the Computer Vision course at Delft University of Technology. This report describes the work flow of our project, the applied methods as well as the obtained results. In total we can segment the shape of a hand in a video sequence fairly accurate and our classification system achieved an accuracy of TODO \% in cross-validation. However, unfortunately these results could not be repeated when classifying the images obtained from the video sequence. 
+
+The remaining parts or this document are structured as follows: \autoref{sec:appr} describes our approach and the implemented methods. \autoref{sec:eval} contains an evaluation of the implemented methods and the respective results. \autoref{sec:concl} concludes the project and gives a short look ahead.
+
+
+\section{Approach}
+\label{sec:appr}
+The aim of the project is to recognize letters from the sign alphabet in a video sequence. To achieve this we take a classical supervised learning approach: we learn a model from labeled examples off-line, then we apply the trained model on video frames.
+
+We identify three main ingredients that are required for the final application: (1) Object descriptors that represent the pose of the hand unambiguously, (2) a model that we can train on a dataset with labeled descriptors, (3) an application that extracts the hand descriptors from a video sequence and matches it with the trained model.
+
+For all steps we tried different approaches. All of them are described in further detail in the following sections. 
+
+\subsection{Training Data}
+
+In total we found two sets that are suitable for our purpose, namely a set from University of Exeter\footnote{\url{http://empslocal.ex.ac.uk/people/staff/np331/index.php?section=FingerSpellingDataset}} and a set from Thomas Moeslund's\footnote{\url{http://www-prima.inrialpes.fr/FGnet/data/12-MoeslundGesture/database.html}}. For the rest of the document we refer to the first one as the \textit{ASL-set} and the second one as the \textit{TM-set}.
+
+The TM-set contains between 50-100 black and white images per class. The subjects wear a black sweater and the pictures are taken in front of a black background. An example can be seen in TODO.
+
+The lightning conditions should make the segmentation quite easy, as there is a big contrast between the hand and the background. However, the lightning conditions are also quite artificial and do not resemble a natural use case. Thus it is questionable whether a model trained on that dataset can perform well in a real application.
+
+The ASL-Set contains 2500 coloured images per class, taken from 5 different subjects. The pictures have been taken from a kinect camera with more or less equal lightning conditions. An example can be seen in TODO. Next to the image also depth data is provided and can be exploited for segmentation. TODO one more sentence about kind of depth data
+
+The pictures contain strong shadows and a lot of time the face of the user is also visible on the picture. Although this resembles much more our final use case, it makes colour-based segmentation much harder. The depth data can help in segmentation on the dataset, but we can't rely on it in the final use case, as it is not available for our webcam.
+
+\subsection{Segmentation}
+
+For our project we want to separate the hand from the image background. As the shape of the hand can be different in every image we can't use shape-based features for segmentation. Instead we try several texture-based approaches. 
+
+Segmentation can also be seen as a two class classification problem. Given a pixel we are looking for the probability that it belongs to the hand or to the background. Based on that probability we can assign it to one of the two. More formally this would be:
+
+\begin{equation}
+	\textbf{assign } y_1 \textbf{ to x if } p(y_1|x) > p(y_0|x \textbf{ else } y_0
+\end{equation}
+With $y_1$ as label for the hand and $y_0$ as label for the background. 
+
+\subsection{Colour Threshold}
+
+The most straight-forward way is to to use a colour range for segmentation. For example a gray threshold or the a skin colour range. As long as the lightning conditions are good and no other objects with the same color are on the image, it can already work reasonably well. 
+
+For this approach we define the likelihood of a pixel being part of the hand:
+
+\begin{equation}
+p(y_1 | x) = \begin{cases}
+1 & \quad \text{if } \gamma_1 < x < \gamma_2 \\
+0 & \quad \text{otherwise}
+\end{cases}
+\end{equation}
+With $\gamma$ as the threshold(s).
+
+We evaluate a gray value threshold on the TM-set, where everything else but the hand is quite dark. Here we set the threshold to TODO.
+
+On the ASL-set we try skin-color-based segmentation. We set a range of TODO in HSV colour space to be part of the hand and everything else to be background.
+
+\subsubsection{Colour Histogram}
+
+A colour histogram consists of a histogram for every colour channel. The histogram can be calculated for a range of pixels and therefore capture a colour distribution over several pixels. Thus it is more reliable than a simple colour threshold.
+
+In our approach we first calculate an average histogram for hand pixels, then we define the class conditional probability as the difference to that average histogram. The likelihood would be defined as:
+
+\begin{equation}
+p(y_1 | x) = e^{\frac{d(\bar{\phi},\phi(x))}{\sigma}}
+\end{equation}
+Where $\phi$ denotes the histogram function, \textbf{d} denotes the KL divergence and $\sigma$ is a scaling factor.
+
+\subsubsection{Nearest Neighbour Classifier}
+
+Instead of just measuring values on the image we can also train a classifier on labeled examples. These are not available in the given data set so we use a hands-on method to obtain samples.
+
+As one can see in the pictures of the ASL-dataset, in almost every case the hand is placed in the center of the picture. Thus we can just sample a window of 6 by 6 pixels in the picture center as objects with label $y_1$. Additionally we can use depth data to obtain samples from the background. Every pixel that does not have the same depth as the hand can be taken as a sample with label $y_0$.
+
+A similar approach can be taken for video frames. Here we can apply background subtraction to obtain hand and background samples. This method is further described in the next paragraph.
+
+Once the classifier is trained it can be used to label the whole image. As we did not implement the classifier ourselves we don't go into detail about its functionality here and refer to standard pattern recognition literature.
+
+\subsubsection{Background Subtraction}
+
+Background subtraction is a way to separate fore- and background in videos. An average frame over several frames is calculated and then subtracted from the current frame. Thus only objects that changed their appearance remain in the dissimilarity image.
+
+This could work for our approach as the hand is always moving and changing a bit. As our application will only run on a stationary webcam, we can assume that the hand is the only moving object in the frame. However, the approach can't be applied during training, as we only have static images available.
+
+We define a likelihood model for background subtraction as follows:
+
+\begin{equation}
+p(y_1 | x) = e^{\frac{||\bar{x}-x||)}{\sigma}}
+\label{eq:backg}
+\end{equation}
+Where $\bar{x}$ is the background, and $\sigma$ a scaling factor.
+
+\subsubsection{Markov Random Field}
+
+A Markov Random Field (MRF) enables the incorporation of spatial conditions with label probabilities. We use it to combine these spatial conditions with several of the methods described before.
+
+The likelihood we define as a weighted sum of the score of the nearest neighbour classifier and of the background calculation. This can be formulated as follows:
+\begin{equation}
+p(y_1 | x) = \alpha * s_{knn}(_1 | x) + \beta * s_{backgr}(x_1 | x)
+\end{equation}
+With $\alpha$ and $\beta$ as weights.
+
+Depending on whether we apply the model on the ASL-set or the video frame we can use background subtraction or depth data to obtain the background score. In both cases we use a model as described in \autoref{eq:backg}.
+
+For defining spatial structures we take the image gradient. We want the edge value to drop when there was an edge in the initial image. Therefore we assign edges on y and x axis with the respective gradients $I_y, I_x$ multiplied by -1.
+
+In total this gives us the following Markov Random Field:
+
+TODO
+
+The final labelling we obtain with the maxflow graph cut algorithm.
+
+
+\subsection{Representation}
+
+Once the hand is properly segmented from the background we need to define descriptors for the hand shape that enable an accurate recognition. As we are interested in the shape of the hand, shape based descriptors seem to be a reasonable approach at first. However, also these need to be obtained from the image. In several letters it is particular necessary to also capture the shape of the fingers inside the hand and not only the overall shape. In the ASL-set and on the video there are a lot of shadows in the pictures which make this not an easy undertaking.
+
+Therefore we mainly worked on region-based descriptors. The approaches are described in the following.
+
+\subsubsection{Edge-Pixel}
+
+\subsubsection{Histogram of Gradients}
+
+\subsubsection{Bag of HoGs}
+
+\subsection{Classification}
+
+
+\section{Evaluation}
+\label{sec:eval}
+
+\subsection{Results}
+
+
+\begin{table}[h]
+\caption{An Example of a Table}
+\label{table_example}
+\begin{center}
+\begin{tabular}{|c||c|}
+\hline
+One & Two\\
+\hline
+Three & Four\\
+\hline
+\end{tabular}
+\end{center}
+\end{table}
+
+
+\section{CONCLUSIONS}
+\label{sec:concl}
+TODO
+
+\addtolength{\textheight}{-12cm}   % This command serves to balance the column lengths
+                                  % on the last page of the document manually. It shortens
+                                  % the textheight of the last page by a suitable amount.
+                                  % This command does not take effect until the next page
+                                  % so it should come on the page before the last. Make
+                                  % sure that you do not shorten the textheight too much.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{APPENDIX}
+
+TODO put link to code
+
+
+
+
+
+\end{document}

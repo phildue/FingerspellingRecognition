@@ -45,7 +45,6 @@ class UserInterface:
                 # clone the frame
                 clone = frame.copy()
                 (height, width) = frame.shape[:2]
-
                 # get the ROI
                 self.set_roi(int(floor(1 / 2 * width)), int(floor(3 / 4 * width)), int(floor(1 / 3 * height)),
                              int(floor(2 / 3 * height)))
@@ -59,6 +58,8 @@ class UserInterface:
                 if roi is None:
                     print("roi is null")
                     return
+                # display the frame
+                cv2.imshow("Video Feed", clone)
 
                 # pass frame to frame handler
                 self.frame_handler.add_frame(roi)
@@ -78,8 +79,7 @@ class UserInterface:
                     else:
                         print("Recognized letter: " + letter)
 
-                # display the frame
-                cv2.imshow("Video Feed", clone)
+
 
             # free up memory
             self.camera.release()

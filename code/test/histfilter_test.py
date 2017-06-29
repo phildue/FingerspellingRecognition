@@ -1,6 +1,6 @@
 import cv2
 
-from classification.models.ColourModelAsl import ColourModelAsl
+from classification.models.HistSegmenter import ColourModelAsl
 
 img = cv2.imread("../../resource/dataset/fingerspelling5/dataset5/A/a/color_0_0004.png")
 

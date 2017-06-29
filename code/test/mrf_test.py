@@ -2,7 +2,7 @@ import cv2
 import maxflow as mf
 import numpy as np
 
-from classification.models.ColourModelAsl import ColourModelAsl
+from classification.models.HistSegmenter import ColourModelAsl
 from preprocessing.mrf import MarkovRandomField
 
 

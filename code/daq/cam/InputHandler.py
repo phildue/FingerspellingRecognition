@@ -2,8 +2,8 @@ import cv2
 import imutils
 from numpy.ma import floor
 
-from classification.models.ColourModelVideo import ColourModelVideo
-from classification.models.ShapeModel import ShapeModel
+from classification.models.MrfSegmenter import ColourModelVideo
+from classification.models.HogExtractor import ShapeModel
 from daq.cam.InputGenerator import InputGenerator
 from preprocessing.segmentation_tm import extract_descriptor
 

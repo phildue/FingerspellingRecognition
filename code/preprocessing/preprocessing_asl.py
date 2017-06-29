@@ -12,7 +12,7 @@ def extract_descriptors(imgs):
 
 
 def extract_descriptor(img):
-    return get_boh_descriptor(img, '../../resource/models/codebook.pkl').reshape(1, -1)
+    return get_hog(img, win_size=6, n_bins=16).reshape(1, -1)
 
 
 def preprocesss(imgs: [(np.array, np.array)], roi_size=(60, 60)) -> [np.array]:

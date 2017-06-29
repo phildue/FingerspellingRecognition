@@ -11,7 +11,7 @@ def gen_codebook(images, k_words=128):
     return KMeans(n_clusters=k_words).fit(descriptors).cluster_centers_
 
 
-def get_codebook_dist(hog, codebook, bandwidth=100000):
+def get_codebook_dist(hog, codebook, bandwidth=10000):
     dist = np.exp(-cdist(hog, codebook) / bandwidth)
     return np.min(dist, axis=0)
 

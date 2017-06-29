@@ -2,7 +2,7 @@ import numpy as np
 from sklearn.externals import joblib
 
 
-class ShapeModel:
+class HogEstimator:
     letters = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t",
                "u",
                "v", "w", "x", "y"]

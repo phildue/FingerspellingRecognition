@@ -2,8 +2,8 @@ import cv2
 import imutils
 from numpy.ma import floor
 
-from classification.models.MrfSegmenter import ColourModelVideo
-from classification.models.HogExtractor import ShapeModel
+from classification.models.MrfSegmenter import MRFSegmenter
+from classification.models.HogEstimator import HogEstimator
 from daq.cam.InputGenerator import InputGenerator
 from preprocessing.segmentation_tm import extract_descriptor
 
@@ -33,8 +33,8 @@ class InputHandler:
             self.num_frames = 0
 
             inputgen = InputGenerator(0.5)
-            colour_model = ColourModelVideo()
-            shape_model = ShapeModel('../../../resource/models/model.pkl')
+            colour_model = MRFSegmenter()
+            shape_model = HogEstimator('../../../resource/models/model.pkl')
             # keep looping, until interrupted
             while True:
                 # observe the keypress by the user

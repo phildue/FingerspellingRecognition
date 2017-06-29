@@ -5,7 +5,7 @@ from scipy.stats import entropy
 from preprocessing.color_hist import colour_hist, kl_divergence
 
 
-class ColourModelAsl:
+class HistSegmenter:
     def __init__(self, filepath="../../resource/dataset/skin/skinhist_asl"):
         self.skinhist = np.load(filepath)
 

@@ -8,7 +8,7 @@ from preprocessing.mrf import MarkovRandomField
 from preprocessing.segmentation import get_background_score, get_weighted_sum, get_smooth_grid, extract
 
 
-class ColourModelVideo:
+class MRFSegmenter:
     classifier = None
     trained = False
     background = None

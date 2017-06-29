@@ -1,25 +1,23 @@
 import cv2
 import imutils
-from classification.models.MrfSegmenter import MRFSegmenter
 from numpy.ma import floor
 
-from app.models.BackgroundSubtractor import InputGenerator
-from app.models.HogEstimator import HogEstimator
-from preprocessing.segmentation_tm import extract_descriptor
+from app.FrameHandler import FrameHandler
 
 letters = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t",
            "u",
            "v", "w", "x", "y"]
 
 
-class InputHandler:
-    def __init__(self):
+class UserInterface:
+    def __init__(self, frame_handler: FrameHandler):
         self.num_frames = 0
         self.camera = None
         self.roi_left = 0
         self.roi_right = 0
         self.roi_top = 0
         self.roi_bottom = 0
+        self.frame_handler = frame_handler
 
     def set_roi(self, l, r, t, b):
         self.roi_left = l
@@ -30,10 +28,10 @@ class InputHandler:
     def run(self):
         if self.camera is None:
             self.camera = cv2.VideoCapture(0)
-            self.num_frames = 0
-
             # keep looping, until interrupted
-            while True:
+            keypress = cv2.waitKey(1) & 0xFF
+            calibrate_print_flag = calibrated_print_flag = False
+            while keypress != ord("q"):
                 # observe the keypress by the user
                 keypress = cv2.waitKey(1) & 0xFF
                 # get the current frame
@@ -41,7 +39,6 @@ class InputHandler:
 
                 # resize the frame
                 frame = imutils.resize(frame, width=800)
-
                 # flip the frame so that it is not the mirror view
                 frame = cv2.flip(frame, 1)
 
@@ -53,6 +50,10 @@ class InputHandler:
                 self.set_roi(int(floor(1 / 2 * width)), int(floor(3 / 4 * width)), int(floor(1 / 3 * height)),
                              int(floor(2 / 3 * height)))
 
+                # draw roi
+                cv2.rectangle(clone, (self.roi_left, self.roi_top), (self.roi_right, self.roi_bottom), (0, 255, 0),
+                              2)
+
                 roi = frame[self.roi_top:self.roi_bottom, self.roi_left:self.roi_right]
 
                 if roi is None:
@@ -60,26 +61,29 @@ class InputHandler:
                     return
 
                 # pass frame to frame handler
+                self.frame_handler.add_frame(roi)
 
+                if self.frame_handler.is_ready_to_calibrate() and not calibrate_print_flag:
+                    print("Put your hand in the green box and press c to calibrate...")
+                    calibrate_print_flag = True
+                if self.frame_handler.is_calibrated() and not calibrated_print_flag:
+                    print("Calibrated..")
+                    calibrated_print_flag = True
 
-                if keypress == ord("c"):
-                    print("Calibrated ..")
+                # print letter
+                if self.frame_handler.is_calibrated():
+                    letter = self.frame_handler.get_letter()
+                    if letter is None:
+                        print("No letter recognized")
+                    else:
+                        print("Recognized letter: " + letter)
 
-                # draw the segmented hand
-                cv2.rectangle(clone, (self.roi_left, self.roi_top), (self.roi_right, self.roi_bottom), (0, 255, 0),
-                              2)
-
-                # display the frame with segmented hand
+                # display the frame
                 cv2.imshow("Video Feed", clone)
-
-                # if the user pressed "q", then stop looping
-                if keypress == ord("q"):
-                    break
 
             # free up memory
             self.camera.release()
+            self.frame_handler.stop()
             cv2.destroyAllWindows()
 
 
-inputhandler = InputHandler()
-inputhandler.run()

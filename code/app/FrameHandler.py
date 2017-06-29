@@ -12,13 +12,9 @@ from preprocessing.preprocessing_asl import extract_descriptor
 class FrameHandler:
     frame_queue = Queue()
     running = True
-    calibrate = False
+    calibrate = ready_to_calibrate = calibrated = False
     detected_letter = None
     s_ready_to_calibrate = s_calibrate = s_calibrated = s_letter = s_running = threading.Lock()
-
-    def __init__(self):
-        self.s_ready_to_calibrate.acquire()
-        self.s_calibrated.acquire()
 
     def run(self):
         inputgen = InputGenerator(0.5)
@@ -42,8 +38,10 @@ class FrameHandler:
                     self.s_ready_to_calibrate.release()
                 self.s_calibrate.acquire()
                 if self.calibrate:
-                    self.s_calibrate.realease()
+                    self.s_calibrate.release()
                     colour_model.train(inputgen.background, frame)
+                    self.s_calibrated.acquire()
+                    self.calibrated = True
                     self.s_calibrated.release()
             else:
                 # segment the hand region
@@ -81,4 +79,16 @@ class FrameHandler:
         return letter
 
     def is_ready_to_calibrate(self):
-        return self.s_ready_to_calibrate.acquire()
+        self.s_ready_to_calibrate.acquire()
+        flag = self.ready_to_calibrate
+        self.s_ready_to_calibrate.release()
+        return flag
+
+    def is_calibrated(self):
+        self.s_calibrated.acquire()
+        flag = self.calibrated
+        self.s_calibrated.release()
+        return flag
+
+    def add_frame(self, frame):
+        self.frame_queue.put(frame)

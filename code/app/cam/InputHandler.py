@@ -1,10 +1,10 @@
 import cv2
 import imutils
+from classification.models.MrfSegmenter import MRFSegmenter
 from numpy.ma import floor
 
-from classification.models.MrfSegmenter import MRFSegmenter
-from classification.models.HogEstimator import HogEstimator
-from daq.cam.InputGenerator import InputGenerator
+from app.cam.InputGenerator import InputGenerator
+from app.models.HogEstimator import HogEstimator
 from preprocessing.segmentation_tm import extract_descriptor
 
 letters = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t",

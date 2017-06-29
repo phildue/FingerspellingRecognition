@@ -1,6 +1,6 @@
 import cv2
 
-from classification.models.HistSegmenter import HistSegmenter
+from app.models.HistSegmenter import HistSegmenter
 
 img = cv2.imread("../../resource/dataset/fingerspelling5/dataset5/A/a/color_0_0004.png")
 

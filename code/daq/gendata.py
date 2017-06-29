@@ -1,6 +1,6 @@
 import numpy as np
 
-from daq.dataset.fileaccess import read_letters
+from daq.fileaccess import read_letters
 from preprocessing.preprocessing_asl import preprocesss, extract_descriptors
 
 

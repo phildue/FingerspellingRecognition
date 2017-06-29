@@ -1,7 +1,6 @@
 import cv2
-import numpy as np
 
-from daq.dataset.fileaccess import read_image, read_image_depth
+from daq.fileaccess import read_image, read_image_depth
 from preprocessing.segmentation import segment_asl
 
 example_image_file = "../../resource/dataset/fingerspelling5/dataset5/E/h/color_7_0007.png"

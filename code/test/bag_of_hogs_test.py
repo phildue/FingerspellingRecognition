@@ -1,8 +1,7 @@
 import random
 
-from daq.dataset.fileaccess import get_paths_asl, read_image_asl
-from preprocessing.bag_of_hogs import gen_codebook, get_codebook_dist, get_boh_descriptor
-from preprocessing.hog import get_hog
+from daq.fileaccess import get_paths_asl, read_image_asl
+from preprocessing.bag_of_hogs import get_boh_descriptor
 from preprocessing.preprocessing_asl import preprocess
 
 codebook_file = '../../resource/models/codebook.pkl'

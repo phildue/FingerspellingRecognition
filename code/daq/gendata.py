@@ -1,7 +1,21 @@
+import random
+
 import numpy as np
+from sklearn.externals import joblib
 
 from daq.fileaccess import read_letters
 from preprocessing.preprocessing_asl import preprocesss, extract_descriptors
+
+
+def loaddata_sign(sample_file_path, label_file_path, sample_size=2500):
+    data = joblib.load(sample_file_path)
+    labels = joblib.load(label_file_path)
+
+    if sample_size < 2500:
+        idx = random.sample(range(0, data.shape[0]), size=sample_size)
+        return data[idx, :], labels[idx]
+    else:
+        return data, labels
 
 
 def gendata_sign(img_file_paths,
@@ -39,5 +53,3 @@ def vectorize(descriptor_lists, dim, sample_size):
             index += 1
 
     return data, labels
-
-

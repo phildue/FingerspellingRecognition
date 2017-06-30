@@ -21,3 +21,4 @@ class PreprocessorVideo:
 
     def calibrate_object(self, frame):
         self.segmenter.train(self.background_subtractor.background, frame)
+        self.calibrated = True

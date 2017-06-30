@@ -2,9 +2,9 @@ import threading
 from multiprocessing import Queue
 
 import cv2
-
 from app.models.PreprocessorVideo import PreprocessorVideo
-from app.models.EstimatorVideo import EstimatorVideo
+
+from app.EstimatorVideo import EstimatorVideo
 from preprocessing.preprocessing_asl import extract_descriptor
 
 

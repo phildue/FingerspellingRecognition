@@ -31,4 +31,5 @@ def preprocess(img: (np.array, np.array), roi_size=(60, 60)) -> np.array:
     # find roi (hand), crop it, find edges
     img_segment = segment_asl(img[0], img[1])
     img_segment = cv2.cvtColor(img_segment, cv2.COLOR_RGB2GRAY)
-    return cv2.resize(img_segment, roi_size)
+    img_segment = cv2.resize(img_segment, roi_size)
+    return cv2.equalizeHist(img_segment)

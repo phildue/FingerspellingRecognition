@@ -14,7 +14,6 @@ example_image_file = "../../resource/dataset/fingerspelling5/dataset5/A/a/color_
 img = read_image_asl(example_image_file)
 
 cv2.imshow('image', img[0])
-cv2.waitKey(0)
 
 img = preprocess(img)
 cv2.imshow("after prefiltering", img)

@@ -15,7 +15,8 @@ class PreprocessorVideo:
         hand_label = self.segmenter.segment(frame)
         hand = extract_label(frame, hand_label, confidence_thresh=110)
         hand = cv2.cvtColor(hand, cv2.COLOR_BGR2GRAY)
-        return cv2.resize(hand, (60, 60))
+        hand = cv2.resize(hand, (60, 60))
+        return cv2.equalizeHist(hand)
 
     def extract_descriptor(self, frame):
         return extract_descriptor(frame)

@@ -16,7 +16,7 @@ example_image_file = "../../resource/dataset/tm/" + letter + str(
 img = read_image(example_image_file)
 
 cv2.imshow('image', img)
-img = preprocess(img)
+img = preprocess(img, roi_size=(60, 60))
 cv2.imshow("after prefiltering", img)
 cv2.waitKey(0)
 

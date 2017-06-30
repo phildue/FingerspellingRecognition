@@ -105,9 +105,7 @@ As a first start in that direction we start by recognizing the fingerspelling al
 
 For that we build a classification system and train it on a dataset of static images. As a proof of concept we embed the obtained model in a small application. The application reads a video stream from the webcam, segments the hand of the user and shows the recognized letter.
 
-For computer vision applications one can make use of a lot of tools and libraries that are already implemented. In this project we use \textit{python3} together with the \textit{scikit} library and \textit{OpenCV}. 
-
-\textit{OpenCV} is used to read and show images, as well as to apply simple operations like thresholding, filtering etc. on a whole image efficiently. From \textit{scikit} we take classifiers, certain data operations like scaling and dimension reduction as well as methods to evaluate the classification system. More details on the implementation of the taken approaches are given in \autoref{sec:appr}
+For computer vision applications one can make use of a lot of tools and libraries that are already implemented. In this project we use \textit{python3} together with \textit{OpenCV} and some other libraries. A full overview is given in \autoref{sec:appendix} 
 
 The project has been carried out in context of the Computer Vision course at Delft University of Technology. This report describes the work flow of our project, the applied methods as well as the obtained results.TODO one sentence results
 
@@ -130,7 +128,7 @@ The TM-set contains between 50-100 black and white images per class. The subject
 
 The lightning conditions should make the segmentation quite easy, as there is a big contrast between the hand and the background. However, the lightning conditions are also quite artificial and do not resemble a natural use case. Thus it is questionable whether a model trained on that dataset can perform well in a real application.
 
-The ASL-Set contains 2500 coloured images per class, taken from 5 different subjects. The pictures have been taken from a kinect camera with more or less equal lightning conditions. An example can be seen in \autoref{fig:asl-set}. Next to the image also depth data is provided and can be exploited for segmentation. TODO one more sentence about kind of depth data
+The ASL-Set contains 2500 coloured images per class, taken from 5 different subjects. The pictures have been taken from a kinect camera with more or less equal lightning conditions. An example can be seen in \autoref{fig:asl-set}. Next to the image also depth data is available. Although it has quite a low resolution (12 steps) it can be exploited for segmentation.
 
 The pictures contain strong shadows and a lot of time the face of the user is also visible on the picture. Although this resembles much more our final use case, it makes colour-based segmentation much harder. The depth data can help in segmentation on the dataset, but we can't rely on it in the final use case, as it is not available for our webcam.
 
@@ -150,7 +148,7 @@ The pictures contain strong shadows and a lot of time the face of the user is al
 \end{figure}
 \subsection{Segmentation}
 
-For our project we want to separate the hand from the image background. As the shape of the hand can be different in every image we can't use shape-based features for segmentation. Instead we try several texture-based approaches. 
+For our project we want to separate the hand from the image background. As the shape of the hand can be different in every image we can't use shape-based features for segmentation. Instead we try several texture-based approaches.
 
 Segmentation can also be seen as a two class classification problem. Given a pixel we are looking for the probability that it belongs to the hand or to the background. Based on that probability we can assign it to one of the two. More formally this would be:
 
@@ -173,9 +171,18 @@ p(y_1 | x) = \begin{cases}
 \end{equation}
 With $\gamma$ as the threshold(s).
 
-We evaluate a gray value threshold on the TM-set, where everything else but the hand is quite dark. Here we set the threshold to TODO.
+We evaluate a gray value threshold on the TM-set, where everything else but the hand is quite dark. An example can be seen in \autoref{fig:tm-segment}, where we cropped the hand of the part with the highest probability. Here we already get satisfying results.
+
+\begin{figure}
+\centering
+\includegraphics[width=0.4\linewidth]{tm-segment}
+\label{fig:tm-segment}
+\caption{Colour-threshold segmentation on TM-set}
+\end{figure}
 
 On the ASL-set we try skin-color-based segmentation. We set a range of TODO in HSV colour space to be part of the hand and everything else to be background.
+
+TODO put example
 
 \subsubsection{Colour Histogram}
 
@@ -184,15 +191,27 @@ A colour histogram consists of a histogram for every colour channel. The histogr
 In our approach we first calculate an average histogram for hand pixels, then we define the class conditional probability as the difference to that average histogram. The likelihood would be defined as:
 
 \begin{equation}
-p(y_1 | x) = e^{\frac{d(\bar{\phi},\phi(x))}{\sigma}}
+p(y_1 | x) = e^{-\frac{d(\bar{\phi},\phi(x))}{\sigma}}
+\label{eq:hist}
 \end{equation}
 Where $\phi$ denotes the histogram function, \textbf{d} denotes the KL divergence and $\sigma$ is a scaling factor.
+
+On the ASL-set the hand is in almost all cases in the center of the picture. Thus we can obtain the average histogram taking the average histogram for a 6-by-6 window in the center of the picture across the whole dataset. Then we can apply \autoref{eq:hist} with a 6-by-6 sliding window over every image. An example can be seen in \autoref{fig:asl-hist-segment}, where the likelihood is represented in intensity values.
+
+\begin{figure}
+\centering
+\includegraphics[width=0.4\linewidth]{asl-hist-segment}
+\label{fig:asl-hist-segment}
+\caption{Likelihood for colour-histogram segmentation on ASL-set}
+\end{figure}
+
+The example shows the likelihood for \autoref{fig:asl-set} one can easily see that the results are not satisfactory. Although big parts of the background are seperated properly, the method fails on image parts where the colour is similar to skin color. This can be seen in at the face of the subject, as well as the yellow background. Another problem is the big differences even on the hand. All together we don't consider this approach as promising enough.
 
 \subsubsection{Nearest Neighbour Classifier}
 
 Instead of just measuring values on the image we can also train a classifier on labeled examples. Labeled examples are unfortunately not available in the given data set, so we use a hands-on method to obtain samples. 
 
-As one can see in the pictures of the ASL-dataset, in almost every case the hand is placed in the center of the picture. Thus we can just sample a window of 6 by 6 pixels in the picture center as objects with label $y_1$. Additionally we can use depth data to obtain samples from the background. Every pixel that has a different depth value as the hand can be taken as a sample with label $y_0$.
+Similar to the histogram method we can just sample a window of 6-by-6 pixels in the picture center as objects with label $y_1$. Additionally we can use depth data to obtain samples from the background. Every pixel that has a different depth value as the hand can be taken as a sample with label $y_0$.
 
 A similar approach can be taken for video frames. Here we can apply background subtraction to obtain hand and background samples. This method is further described in the next paragraph.
 
@@ -200,21 +219,21 @@ Once the classifier is trained it can be used to label the whole image. As we di
 
 \subsubsection{Background Subtraction}
 
-Background subtraction is a way to separate fore- and background in videos. An average frame over several frames is calculated and then subtracted from the current frame. Thus only objects that changed their appearance remain in the dissimilarity image.
+Background subtraction [TODO REF] is a way to separate fore- and background in videos. A background frame is calculated and subtracted from the current frame. Thus only objects that changed their appearance remain in the dissimilarity image.
 
-This could work for our approach as the hand is always moving and changing a bit. As our application will only run on a stationary webcam, we can assume that the hand is the only moving object in the frame. However, the approach can't be applied during training, as we only have static images available.
+As our application will only run on a stationary webcam, we can assume that the hand is the only moving object and background subtraction is applicable. However, the approach can't be applied during training, where we only have static images available.
 
-We define a likelihood model for background subtraction as follows:
+For the calculation of the background frame we take an average across several frames. We define a likelihood model for background subtraction as follows:
 
 \begin{equation}
-p(y_1 | x) = e^{\frac{||\bar{x}-x||)}{\sigma}}
+p(y_1 | x) = e^{-\frac{||\bar{x}-x||)}{\sigma}}
 \label{eq:backg}
 \end{equation}
 Where $\bar{x}$ is the background, and $\sigma$ a scaling factor. 
 
 \subsubsection{Markov Random Field}
 
-A Markov Random Field (MRF) enables the incorporation of spatial conditions with label probabilities. We use it to combine these spatial conditions with several of the methods described before.
+A Markov Random Field (MRF) [TODO REF] enables the incorporation of spatial conditions with label probabilities. We use it to combine these spatial conditions with several of the methods described before.
 
 The likelihood we define as a weighted sum of the score of the nearest neighbour classifier and of the background calculation. This can be formulated as follows:
 \begin{equation}
@@ -244,18 +263,73 @@ Therefore we mainly worked on region-based descriptors. The approaches are descr
 
 \subsubsection{Edge-Pixel}
 
+A lot of information about the shape is contained in the edges. If we are able to detect the important edges, we can take the contours of the hand as a shape representation. Therefore we apply the Canny edge detection algorithm (PUT REF) and use the resulting picture as features. TODO
+
 \subsubsection{Histogram of Gradients}
 
 \subsubsection{Bag of HoGs}
 
+\subsubsection{Principal Component Analysis}
+
 \subsection{Classification}
 
+\subsubsection{Nearest Neighbour}
+
+\subsubsection{Support Vector Machine}
+
+\subsubsection{Neural Network}
 
 \section{Evaluation}
 \label{sec:eval}
+We select several combinations among the methods described in the previous chapters for evaluation. In a first step we evaluate the methods on the two datasets in cross-evaluation. The methods with the best results, we train on the whole dataset and evaluate in the video.
 
-\subsection{Results}
+\subsection{Performance on Datasets}
 
+We set up a 6-folded cross-evaluation for all methods where we measure the mean performance in accuracy and its standard derivation. An overview of the evaluated methods and their results is given in \autoref{tab:eval-methods}
+
+\begin{table}[h]
+\caption{Evaluated methods}
+\label{tab:eval-methods}
+\begin{center}
+\begin{tabular}{c|c|c|c|c}
+Dataset & Segmentation & Representation & Classifier & Accuracy \\
+\hline
+\hline
+TM-set & Gray-thresh & Edge-Pixel & SVM &\\
+TM-set & Gray-thresh & HoG & SVM &\\
+ASL-set & MRF & HoG & SVM &\\
+ASL-set & MRF & Bag of HoGs & SVM & \\
+\hline
+\end{tabular}
+\end{center}
+\end{table}
+
+TODO blabla results
+
+TODO put confusion matrix
+
+\subsection{Performance on Video}
+
+For the video evaluation two subjects try every letter and .. TODO
+
+\begin{table}[h]
+\caption{Evaluated methods}
+\label{tab:eval-methods}
+\begin{center}
+\begin{tabular}{c|c|c|c|c}
+Trainingset & Segmentation & Representation & Classifier & Accuracy \\
+\hline
+\hline
+TM-set & MRF & HoG & SVM &\\
+ASL-set & MRF & HoG & SVM &\\
+\hline
+\end{tabular}
+\end{center}
+\end{table}
+
+TODO bla bla
+
+TODO put confusion matrix for best one
 
 \begin{table}[h]
 \caption{An Example of a Table}
@@ -293,9 +367,11 @@ TODO
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{APPENDIX}
-
+\label{sec:appendix}
+\subsection{Implementation}
+TODO used libraries
+TODO what did we implement
 TODO put link to code
-
 
 
 

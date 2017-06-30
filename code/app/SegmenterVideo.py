@@ -24,7 +24,7 @@ class SegmenterVideo:
         negative = image[binary == 0].reshape(-1, 3)
         test = image.copy()
         test[binary == 0] = (0, 0, 0)
-        cv2.imshow("Roi", test)
+        # cv2.imshow("Roi", test)
         roi_label = np.ones(shape=(roi.shape[0], 1))
         negative_label = np.zeros(shape=(negative.shape[0], 1))
         data = np.vstack((roi, negative))

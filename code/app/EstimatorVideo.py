@@ -23,5 +23,5 @@ class EstimatorVideo:
             return -1
 
     def stack_descr(self, descriptor):
-        self.votes[int(self.model.predict(descriptor)) - 1] += 1
+        self.votes[int(self.model.predict(descriptor.astype(np.float))) - 1] += 1
         self.iterations += 1

@@ -2,7 +2,7 @@ import cv2
 import maxflow as mf
 import numpy as np
 
-from app.models.HistSegmenter import HistSegmenter
+from app.HistSegmenter import HistSegmenter
 from preprocessing.mrf import MarkovRandomField
 
 

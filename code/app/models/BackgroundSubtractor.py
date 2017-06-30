@@ -1,7 +1,7 @@
 import cv2
 
 
-class InputGenerator:
+class BackgroundSubtractor:
     def __init__(self, alpha=0.5):
         self.background = None
         self.alpha = alpha

@@ -1,17 +1,13 @@
-from daq.dataset.fileaccess import get_paths_tm
 from sklearn.externals import joblib
 
 from classification.pipe import get_pipe
-from daq.gendata import gendata_sign
+from daq.gendata import gendata_sign, load_data_sign
 
 dir_dataset = '../../resource/dataset/tm'
-model_file = '../../resource/models/model.pkl'
+model_file = '../../resource/models/model_asl.pkl'
 # Reads dataset, trains models and stores them on file system
-data, labels = gendata_sign(get_paths_tm(dir_dataset=dir_dataset), 40,
-                            letters=["a", "b", "c", "d", "e", "f", "g", "h", "i", "k", "l", "m", "n", "o", "p", "q",
-                                     "r", "s", "t",
-                                     "u",
-                                     "v", "w", "x", "y"])
+data, labels = load_data_sign('../../resource/models/descriptors.pkl', '../../resource/models/labels.pkl', 2500)
+
 
 pipe = get_pipe()
 pipe.fit(data, labels.ravel())

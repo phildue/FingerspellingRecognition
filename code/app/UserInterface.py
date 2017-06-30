@@ -4,12 +4,12 @@ from numpy.ma import floor
 
 from app.FrameHandler import FrameHandler
 
-letters = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t",
-           "u",
-           "v", "w", "x", "y"]
-
 
 class UserInterface:
+    letters = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t",
+               "u",
+               "v", "w", "x", "y"]
+
     def __init__(self, frame_handler: FrameHandler):
         self.num_frames = 0
         self.camera = None
@@ -78,10 +78,10 @@ class UserInterface:
                 # print letter
                 if self.frame_handler.is_calibrated():
                     letter = self.frame_handler.get_letter()
-                    if letter is None:
+                    if letter is -1:
                         print("No letter recognized")
-                    else:
-                        print("Recognized letter: " + letter)
+                    elif letter is not None:
+                        print("Recognized letter: " + self.letters[letter])
 
             # free up memory
             self.camera.release()

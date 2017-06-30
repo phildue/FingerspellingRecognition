@@ -13,7 +13,7 @@ letters = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "k", "l", "m", "n", "o",
            "v", "w", "x", "y"]
 
 dir_dataset = '../../resource/dataset/tm'
-model = joblib.load('../../resource/models/model.pkl')
+model = joblib.load('../../resource/models/model_tm.pkl')
 cmd = 'y'
 while cmd != 'n':
     letter = str(random.choice(letters))

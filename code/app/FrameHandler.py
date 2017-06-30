@@ -3,7 +3,7 @@ from multiprocessing import Queue
 
 import cv2
 
-from app.models.BackgroundSubtractor import InputGenerator
+from app.models.BackgroundSubtractor import BackgroundSubtractor
 from app.models.HogEstimator import HogEstimator
 from app.models.MrfSegmenter import MRFSegmenter
 from preprocessing.preprocessing_asl import extract_descriptor
@@ -20,9 +20,9 @@ class FrameHandler(threading.Thread):
 
     def __init__(self, hog_model_path):
         threading.Thread.__init__(self)
-        self.inputgen = InputGenerator(0.5)
-        self.colour_model = MRFSegmenter()
-        self.shape_model = HogEstimator(hog_model_path)
+        self.background_subtractor = BackgroundSubtractor(0.5)
+        self.mrf_segmenter = MRFSegmenter()
+        self.hog_estimator = HogEstimator(hog_model_path)
 
     def run(self):
 
@@ -35,28 +35,27 @@ class FrameHandler(threading.Thread):
 
             # to get the background, keep looking till a threshold is reached
             # so that our running average model gets calibrated
-            if not self.colour_model.trained:
+            if not self.mrf_segmenter.trained:
                 if num_frames < 30:
-                    self.inputgen.run_avg(gray)
-                elif not self.colour_model.trained:
+                    self.background_subtractor.run_avg(gray)
+                elif not self.mrf_segmenter.trained:
                     self.ready_to_calibrate.set()
                     self.calibrate.wait()
-                    self.colour_model.train(self.inputgen.background, frame)
+                    self.mrf_segmenter.train(self.background_subtractor.background, frame)
                     self.calibrated.set()
             else:
                 # segment the hand region
-                hand = self.colour_model.segment(frame)
+                hand = self.mrf_segmenter.segment(frame)
 
                 hand_gray = cv2.cvtColor(hand, cv2.COLOR_RGB2GRAY)
-                hand_gray = cv2.resize(hand_gray, (30, 30))
-                cv2.imshow("Segmented Hand", hand_gray)
+                hand_gray = cv2.resize(hand_gray, (60, 60))
+                # cv2.imshow("Segmented Hand", hand_gray)
 
-                self.shape_model.stack_descr(extract_descriptor(hand_gray))
+                self.hog_estimator.stack_descr(extract_descriptor(hand_gray))
                 if (num_frames - 30) % 15 == 0:
                     # every X frames classify and apply majority vote
-                    letter = self.shape_model.predict()
                     self.s_letter.acquire()
-                    self.detected_letter = letter
+                    self.detected_letter = self.hog_estimator.predict()
                     self.s_letter.release()
             # increment the number of frames
             num_frames += 1

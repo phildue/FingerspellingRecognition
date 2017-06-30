@@ -4,6 +4,7 @@ import cv2
 import imutils
 
 from app.BackgroundSubtractor import BackgroundSubtractor
+from app.EstimatorVideo import EstimatorVideo
 from app.PreprocessorVideo import PreprocessorVideo
 from app.SegmenterVideo import SegmenterVideo
 
@@ -18,6 +19,7 @@ roi_top = 0
 roi_bottom = 0
 
 preprocessor = PreprocessorVideo(BackgroundSubtractor(0.5), SegmenterVideo())
+estimator = EstimatorVideo("../../resource/models/model_asl.pkl")
 num_frames = 0
 while keypress != ord("q"):
     # observe the keypress by the user
@@ -50,9 +52,11 @@ while keypress != ord("q"):
             preprocessor.calibrate_background(roi)
         elif keypress == ord("c"):
             preprocessor.calibrate_object(roi)
-    elif (num_frames - 30) % 10 == 0:
+    elif (num_frames - 30) % 20 == 0:
         pp = preprocessor.preprocess(roi)
         cv2.imshow("preprocessed", pp)
+        estimator.stack_descr(preprocessor.extract_descriptor(pp))
+        print(str(estimator.predict()))
 
     cv2.imshow("Video Feed", clone)
 

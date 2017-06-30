@@ -2,9 +2,9 @@ import threading
 from multiprocessing import Queue
 
 import cv2
-from app.models.PreprocessorVideo import PreprocessorVideo
 
 from app.EstimatorVideo import EstimatorVideo
+from app.PreprocessorVideo import PreprocessorVideo
 from preprocessing.preprocessing_asl import extract_descriptor
 
 
@@ -43,9 +43,7 @@ class FrameHandler(threading.Thread):
                 # segment the hand region
                 hand = self.preprocessor.preprocess(frame)
 
-                cv2.imshow("Segmented Hand", hand)
-                cv2.waitKey(10)
-                self.estimator.stack_descr(extract_descriptor(hand))
+                self.estimator.stack_descr(self.preprocessor.extract_descriptor(hand))
                 if (num_frames - 30) % 15 == 0:
                     # every X frames classify and apply majority vote
                     self.s_letter.acquire()

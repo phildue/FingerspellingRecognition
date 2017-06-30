@@ -83,7 +83,7 @@ def mrf_segmentation(img, img_depth):
                              likelihood_grid[:, :, 0]).maxflow()
 
 
-def extract_label(img, label_map):
+def extract_label(img, label_map, confidence_thresh=250):
     label_map = cv2.normalize(label_map.astype(np.uint8), None, 0, 255, cv2.NORM_MINMAX)
     # cv2.imshow("Labels", label_map)
     label_map = cv2.GaussianBlur(label_map, (3, 3), 2)
@@ -93,7 +93,7 @@ def extract_label(img, label_map):
 
     label_map = cv2.morphologyEx(label_map, cv2.MORPH_CLOSE, kernel, iterations=2)
 
-    _, label_map = cv2.threshold(label_map, 250, 255, cv2.THRESH_BINARY)
+    _, label_map = cv2.threshold(label_map, confidence_thresh, 255, cv2.THRESH_BINARY)
 
     img_extracted = img.copy()
     img_extracted[label_map == 0] = 0

@@ -5,10 +5,10 @@ from sklearn.neighbors import KNeighborsClassifier
 
 from exceptions.exceptions import NotTrained
 from preprocessing.mrf import MarkovRandomField
-from preprocessing.segmentation import get_background_score, get_weighted_sum, get_smooth_grid, extract
+from preprocessing.segmentation import get_background_score, get_weighted_sum, get_smooth_grid, extract_label
 
 
-class MRFSegmenter:
+class SegmenterVideo:
     classifier = None
     trained = False
     background = None
@@ -42,6 +42,7 @@ class MRFSegmenter:
         likelihood_grid = get_weighted_sum(classifier_score, background_score)
         weight_x, weight_y = get_smooth_grid(img)
 
-        return extract(img,
-                       MarkovRandomField((img.shape[0], img.shape[1]), weight_x, weight_y, likelihood_grid[:, :, 1],
+        return extract_label(img,
+                             MarkovRandomField((img.shape[0], img.shape[1]), weight_x, weight_y,
+                                               likelihood_grid[:, :, 1],
                                          likelihood_grid[:, :, 0]).maxflow())

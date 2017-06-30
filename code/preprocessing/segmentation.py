@@ -83,7 +83,7 @@ def mrf_segmentation(img, img_depth):
                              likelihood_grid[:, :, 0]).maxflow()
 
 
-def extract(img, label_map):
+def extract_label(img, label_map):
     label_map = cv2.normalize(label_map.astype(np.uint8), None, 0, 255, cv2.NORM_MINMAX)
     # cv2.imshow("Labels", label_map)
     label_map = cv2.GaussianBlur(label_map, (3, 3), 2)
@@ -103,4 +103,4 @@ def extract(img, label_map):
 def segment_asl(img, img_depth):
     img_labeled = mrf_segmentation(img, img_depth)
 
-    return extract(img, img_labeled)
+    return extract_label(img, img_labeled)

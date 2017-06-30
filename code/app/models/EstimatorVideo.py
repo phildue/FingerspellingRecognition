@@ -2,7 +2,7 @@ import numpy as np
 from sklearn.externals import joblib
 
 
-class HogEstimator:
+class EstimatorVideo:
     model = None
     trained = False
     iterations = 0
@@ -23,5 +23,5 @@ class HogEstimator:
             return -1
 
     def stack_descr(self, descriptor):
-        self.votes[int(self.model.predict(descriptor.astype(np.uint8))) - 1] += 1
+        self.votes[int(self.model.predict(descriptor)) - 1] += 1
         self.iterations += 1

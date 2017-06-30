@@ -3,9 +3,8 @@ from multiprocessing import Queue
 
 import cv2
 
-from app.models.BackgroundSubtractor import BackgroundSubtractor
-from app.models.HogEstimator import HogEstimator
-from app.models.MrfSegmenter import MRFSegmenter
+from app.models.PreprocessorVideo import PreprocessorVideo
+from app.models.EstimatorVideo import EstimatorVideo
 from preprocessing.preprocessing_asl import extract_descriptor
 
 
@@ -18,11 +17,10 @@ class FrameHandler(threading.Thread):
     s_letter = threading.Lock()
     detected_letter = None
 
-    def __init__(self, hog_model_path):
+    def __init__(self, preprocessor: PreprocessorVideo, estimator: EstimatorVideo):
         threading.Thread.__init__(self)
-        self.background_subtractor = BackgroundSubtractor(0.5)
-        self.mrf_segmenter = MRFSegmenter()
-        self.hog_estimator = HogEstimator(hog_model_path)
+        self.preprocessor = preprocessor
+        self.estimator = estimator
 
     def run(self):
 
@@ -30,32 +28,28 @@ class FrameHandler(threading.Thread):
         while not self.stop_.is_set():
             frame = self.frame_queue.get(True)
             # convert the roi to grayscale and blur it
-            gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-            gray = cv2.GaussianBlur(gray, (7, 7), 0)
 
             # to get the background, keep looking till a threshold is reached
             # so that our running average model gets calibrated
-            if not self.mrf_segmenter.trained:
+            if not self.preprocessor.calibrated:
                 if num_frames < 30:
-                    self.background_subtractor.run_avg(gray)
-                elif not self.mrf_segmenter.trained:
+                    self.preprocessor.calibrate_background(frame)
+                else:
                     self.ready_to_calibrate.set()
                     self.calibrate.wait()
-                    self.mrf_segmenter.train(self.background_subtractor.background, frame)
+                    self.preprocessor.calibrate_object(frame)
                     self.calibrated.set()
             else:
                 # segment the hand region
-                hand = self.mrf_segmenter.segment(frame)
+                hand = self.preprocessor.preprocess(frame)
 
-                hand_gray = cv2.cvtColor(hand, cv2.COLOR_RGB2GRAY)
-                hand_gray = cv2.resize(hand_gray, (60, 60))
-                # cv2.imshow("Segmented Hand", hand_gray)
-
-                self.hog_estimator.stack_descr(extract_descriptor(hand_gray))
+                cv2.imshow("Segmented Hand", hand)
+                cv2.waitKey(10)
+                self.estimator.stack_descr(extract_descriptor(hand))
                 if (num_frames - 30) % 15 == 0:
                     # every X frames classify and apply majority vote
                     self.s_letter.acquire()
-                    self.detected_letter = self.hog_estimator.predict()
+                    self.detected_letter = self.estimator.predict()
                     self.s_letter.release()
             # increment the number of frames
             num_frames += 1

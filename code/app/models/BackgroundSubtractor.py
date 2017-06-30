@@ -7,12 +7,14 @@ class BackgroundSubtractor:
         self.alpha = alpha
 
     def run_avg(self, image):
+        image_gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+        image_blur = cv2.GaussianBlur(image_gray, (7, 7), 0)
         # initialize the background
         if self.background is None:
-            self.background = image.copy().astype("float")
+            self.background = image_blur.copy().astype("float")
             return
         # compute weighted average, accumulate it and update the background
-        cv2.accumulateWeighted(image, self.background, self.alpha)
+        cv2.accumulateWeighted(image_blur, self.background, self.alpha)
 
     def get_foreground(self, image):
         # find the absolute difference between background and current frame

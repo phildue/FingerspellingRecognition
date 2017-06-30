@@ -1,3 +1,5 @@
+import threading
+
 import cv2
 import imutils
 from numpy.ma import floor
@@ -33,7 +35,7 @@ class UserInterface:
             calibrate_print_flag = calibrated_print_flag = False
             while keypress != ord("q"):
                 # observe the keypress by the user
-                keypress = cv2.waitKey(1) & 0xFF
+                keypress = cv2.waitKey(10) & 0xFF
                 # get the current frame
                 (grabbed, frame) = self.camera.read()
 
@@ -59,6 +61,7 @@ class UserInterface:
                     print("roi is null")
                     return
                 # display the frame
+
                 cv2.imshow("Video Feed", clone)
 
                 # pass frame to frame handler

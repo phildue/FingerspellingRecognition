@@ -47,11 +47,11 @@ while keypress != ord("q"):
 
     if not preprocessor.calibrated:
         if num_frames < 30:
-            preprocessor.calibrate_background(frame)
+            preprocessor.calibrate_background(roi)
         elif keypress == ord("c"):
-            preprocessor.calibrate_object(frame)
-    else:
-        pp = preprocessor.preprocess(clone)
+            preprocessor.calibrate_object(roi)
+    elif (num_frames - 30) % 10 == 0:
+        pp = preprocessor.preprocess(roi)
         cv2.imshow("preprocessed", pp)
 
     cv2.imshow("Video Feed", clone)

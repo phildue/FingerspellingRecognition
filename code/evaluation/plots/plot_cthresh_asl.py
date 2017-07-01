@@ -30,5 +30,5 @@ img, _ = read_image_asl(example_image_file)
 
 cv2.imshow('image', img)
 img = colourbased_skin_segmentation(img)
-cv2.imshow("after prefiltering", img.astype(np.uint8))
+cv2.imshow("Likelihood", img.astype(np.uint8))
 cv2.waitKey(0)

@@ -211,7 +211,7 @@ p(y_1 | x) = e^{-\frac{d(\bar{\phi},\phi(x))}{\sigma}}
 \end{equation}
 Where $\phi$ denotes the histogram function, \textbf{d} denotes the KL divergence and $\sigma$ is a scaling factor.
 
-Also this approach can be implemented with numpy arrays. The calculation of the KL divergence we integrate from them MATLAB script of the last lab session to python.
+Also this approach can be implemented with numpy arrays. The calculation of the KL divergence we integrate from them \textit{MATLAB} script of the last lab session to python.
 
 On the ASL-set the hand is in almost all cases in the center of the picture. Thus we can obtain the average histogram taking the average histogram for a 6-by-6 window in the center of the picture across the whole dataset. Then we can apply \autoref{eq:hist} with a 6-by-6 sliding window over every image. An example can be seen in \autoref{fig:asl-hist-segment}, where the likelihood is represented in intensity values.
 
@@ -271,7 +271,7 @@ Labeled examples are unfortunately not available in the given data set, so we us
 
 Once the classifier is trained it can be used to label the whole image. As we did not implement the classifier ourselves we don't go into detail about its functionality here and refer to standard pattern recognition literature.
 
-For the implementation we use the 3-nearest-neighbour implementation from \texttt{sklearn}. The library allows training a model and obtaining predictions.
+For the implementation we use the 3-nearest-neighbour implementation from \textit{sklearn}. The library allows training a model and obtaining predictions.
 
 \subsubsection{Markov Random Field}
 
@@ -354,13 +354,13 @@ To compensate for the rotation invariance we apply a "Bag-of-" method. Here we a
 
 Thus the distance of a image to a code word is defined by the distance of its closest instance. The measure should give a high similarity if the HoGs of two objects are similar even if they are at different places in the image.
 
-This method basically builds upon the previous method. After having obtained the HoG-features for all images we use KMeans clustering from the sklearn library to get the codebook.
+This method basically builds upon the previous method. After having obtained the HoG-features for all images we use KMeans clustering from the \textit{sklearn} library to get the codebook.
 
 \subsubsection{Principal Component Analysis}
 
 A general way to deal with high dimensionality or less informative features is principal component analysis [TODO REF]. Here we transform the feature space by keeping the maximal variance. We evaluate PCA on top of the previously described methods. The principal components are chosen in a way that 90\% of the variance is kept.
 
-Also here we use the sklearn library. It provides as with functions to scale the data, as well as to apply PCA.
+Also here we use the \textit{sklearn} library. It provides as with functions to scale the data, as well as to apply PCA.
 
 \subsection{Classification}
 
@@ -376,7 +376,7 @@ In the video the user will not change the shown letter every couple of milliseco
 
 We take a sequence of 5 frames per sample and classify each. The final prediction is based on a majority vote. Additionally we can set a "confidence" threshold to avoid misclassification. If not at least 75 \% of the predictions are the same, we reject the classification and a "Letter not recognized" is displayed on the screen.
 
-The majority voting we implement ourselves. The classifiers are taken from sklearn library.
+The majority voting we implement ourselves. The classifiers are taken from \textit{sklearn} library.
 
 \section{Evaluation}
 \label{sec:eval}

@@ -26,8 +26,8 @@ def get_smooth_grid(img):
 
 def get_background_score(img, background, bandwidth=10):
     background_score_grid = np.zeros(shape=(background.shape[0], background.shape[1], 2))
-    background_score_grid[:, :, 0] = np.exp(-linalg.norm(img - background) / bandwidth)
-    background_score_grid[:, :, 1] = 1 - background_score_grid[:, :, 0]
+    background_score_grid[:, :, 1] = np.exp(-np.abs(img.astype('float') - background.astype('float')) / bandwidth)
+    background_score_grid[:, :, 0] = 1 - background_score_grid[:, :, 0]
 
     return background_score_grid
 
@@ -44,7 +44,7 @@ def get_classifier_score(img, pixels_fg, pixels_bg):
     return knn.predict_proba(img.reshape(-1, 3)).reshape(img.shape[0], img.shape[1], 2)
 
 
-def get_weighted_sum(classifier_score_grid, background_score_grid, w_classifier=0.8):
+def get_weighted_sum(classifier_score_grid, background_score_grid, w_classifier=0.7):
     w_background = 1 - w_classifier
     score_grid = w_classifier * classifier_score_grid + w_background * background_score_grid
 
@@ -87,11 +87,10 @@ def extract_label(img, label_map, confidence_thresh=250):
     label_map = cv2.normalize(label_map.astype(np.uint8), None, 0, 255, cv2.NORM_MINMAX)
     # cv2.imshow("Labels", label_map)
     label_map = cv2.GaussianBlur(label_map, (3, 3), 2)
-    kernel = np.ones((1, 1), np.uint8)
-    label_map = cv2.erode(label_map, kernel, iterations=1)
+
     kernel = np.ones((5, 5), np.uint8)
 
-    label_map = cv2.morphologyEx(label_map, cv2.MORPH_CLOSE, kernel, iterations=2)
+    label_map = cv2.morphologyEx(label_map, cv2.MORPH_CLOSE, kernel, iterations=5)
 
     _, label_map = cv2.threshold(label_map, confidence_thresh, 255, cv2.THRESH_BINARY)
 
@@ -103,4 +102,4 @@ def extract_label(img, label_map, confidence_thresh=250):
 def segment_asl(img, img_depth):
     img_labeled = mrf_segmentation(img, img_depth)
 
-    return extract_label(img, img_labeled)
+    return extract_label(img, img_labeled, 180)

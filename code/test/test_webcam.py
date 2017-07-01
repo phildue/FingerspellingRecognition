@@ -55,6 +55,7 @@ while keypress != ord("q"):
     elif (num_frames - 30) % 20 == 0:
         pp = preprocessor.preprocess(roi)
         cv2.imshow("preprocessed", pp)
+        cv2.waitKey(0)
         estimator.stack_descr(preprocessor.extract_descriptor(pp))
         print(str(estimator.predict()))
 

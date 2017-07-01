@@ -11,11 +11,9 @@ def load_data_sign(sample_file_path, label_file_path, sample_size=2500):
     data = joblib.load(sample_file_path)
     labels = joblib.load(label_file_path)
 
-    if sample_size < 2500:
-        idx = random.sample(range(0, data.shape[0]), sample_size)
-        return data[idx, :], labels[idx]
-    else:
-        return data, labels
+    print("Samples: " + str(data.shape[0]))
+
+    return data, labels
 
 
 def gendata_sign(img_file_paths,

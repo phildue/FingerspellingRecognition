@@ -124,24 +124,26 @@ For all steps we tried different approaches. These are described in further deta
 
 In total we found two sets that are suitable for our purpose, namely a set from University of Exeter\footnote{\url{http://empslocal.ex.ac.uk/people/staff/np331/index.php?section=FingerSpellingDataset}} and a set from Thomas Moeslund's\footnote{\url{http://www-prima.inrialpes.fr/FGnet/data/12-MoeslundGesture/database.html}}. For the rest of the document we refer to the first one as the \textit{ASL-set} and the second one as the \textit{TM-set}.
 
-The TM-set contains between 50-100 black and white images per class. The subjects wear a black sweater and the pictures are taken in front of a black background. An example can be seen in \autoref{fig:tm-set}.
+The TM-set contains between 50-100 black and white images per class for the 24 letters of the alphabet. The subjects wear a black sweater and the pictures are taken in front of a black background. An example can be seen in \autoref{fig:tm-set}.
 
 The lightning conditions should make the segmentation quite easy, as there is a big contrast between the hand and the background. However, the lightning conditions are also quite artificial and do not resemble a natural use case. Thus it is questionable whether a model trained on that dataset can perform well in a real application.
 
-The ASL-Set contains 2500 coloured images per class, taken from 5 different subjects. The pictures have been taken from a kinect camera with more or less equal lightning conditions. An example can be seen in \autoref{fig:asl-set}. Next to the image also depth data is available. Although it has quite a low resolution (12 steps) it can be exploited for segmentation.
+The ASL-Set contains 2500 coloured images per class for the 24 letters of the alphabet, taken from 5 different subjects. The pictures have been taken from a kinect camera with more or less equal lightning conditions. An example can be seen in \autoref{fig:asl-set}. Next to the image also depth data is available which can be used for segmentation.
 
 The pictures contain strong shadows and a lot of time the face of the user is also visible on the picture. Although this resembles much more our final use case, it makes colour-based segmentation much harder. The depth data can help in segmentation on the dataset, but we can't rely on it in the final use case, as it is not available for our webcam.
 
 \begin{figure}
 \centering
 \begin{minipage}{0.4\linewidth}
-\includegraphics[height=4cm]{a-tm}
+	\centering
+\includegraphics[height=3cm]{a-tm}
 \caption{Example image for the TM-set}
 \label{fig:tm-set}
 \end{minipage}
 \hfill
 \begin{minipage}{0.4\linewidth}
-\includegraphics[height=4cm]{a-asl}
+	\centering
+\includegraphics[height=3cm]{a-asl}
 \caption{Example image for the ASL-set}
 \label{fig:asl-set}
 \end{minipage}
@@ -171,14 +173,27 @@ p(y_1 | x) = \begin{cases}
 \end{equation}
 With $\gamma$ as the threshold(s).
 
+This approach can easily be implemented using conditioned indexing with numpy arrays. All pixels of an image that contain a colour value that is higher than a certain threshold are copied to a new image.
+
 We evaluate a gray value threshold on the TM-set, where everything else but the hand is quite dark. An example can be seen in \autoref{fig:tm-segment}, where we cropped the hand of the part with the highest probability. Here we already get satisfying results.
 
 \begin{figure}
-\centering
-\includegraphics[width=0.4\linewidth]{tm-segment}
-\label{fig:tm-segment}
-\caption{Colour-threshold segmentation on TM-set}
+	\centering
+	\begin{minipage}{0.4\linewidth}
+		\centering
+\includegraphics[height=3cm]{asl-hist-segment}
+\caption{Likelihood for colour-histogram segmentation on ASL-set}
+\label{fig:asl-hist-segment}
+	\end{minipage}
+	\hfill
+	\begin{minipage}{0.4\linewidth}
+		\centering
+		\includegraphics[height=3cm]{asl-depth}
+		\caption{Depth data int the ASL-set}
+		\label{fig:asl-depth}
+	\end{minipage}
 \end{figure}
+
 
 On the ASL-set we try skin-color-based segmentation. We set a range of TODO in HSV colour space to be part of the hand and everything else to be background.
 
@@ -188,7 +203,7 @@ TODO put example
 
 A colour histogram consists of a histogram for every colour channel. The histogram can be calculated for a range of pixels and therefore capture a colour distribution over several pixels. Thus it is more reliable than a simple colour threshold.
 
-In our approach we first calculate an average histogram for hand pixels, then we define the class conditional probability as the difference to that average histogram. The likelihood would be defined as:
+In our approach we first calculate an average histogram for hand pixels, then we define the class conditional probability as the difference to that average histogram. Inspired by the last lab session we define the likelihood as:
 
 \begin{equation}
 p(y_1 | x) = e^{-\frac{d(\bar{\phi},\phi(x))}{\sigma}}
@@ -196,26 +211,18 @@ p(y_1 | x) = e^{-\frac{d(\bar{\phi},\phi(x))}{\sigma}}
 \end{equation}
 Where $\phi$ denotes the histogram function, \textbf{d} denotes the KL divergence and $\sigma$ is a scaling factor.
 
+Also this approach can be implemented with numpy arrays. The calculation of the KL divergence we integrate from them MATLAB script of the last lab session to python.
+
 On the ASL-set the hand is in almost all cases in the center of the picture. Thus we can obtain the average histogram taking the average histogram for a 6-by-6 window in the center of the picture across the whole dataset. Then we can apply \autoref{eq:hist} with a 6-by-6 sliding window over every image. An example can be seen in \autoref{fig:asl-hist-segment}, where the likelihood is represented in intensity values.
 
 \begin{figure}
 \centering
-\includegraphics[width=0.4\linewidth]{asl-hist-segment}
-\label{fig:asl-hist-segment}
-\caption{Likelihood for colour-histogram segmentation on ASL-set}
+\includegraphics[height=3cm]{tm-segment}
+\label{fig:tm-segment}
+\caption{Colour-threshold segmentation on TM-set}
 \end{figure}
 
-The example shows the likelihood for \autoref{fig:asl-set} one can easily see that the results are not satisfactory. Although big parts of the background are seperated properly, the method fails on image parts where the colour is similar to skin color. This can be seen in at the face of the subject, as well as the yellow background. Another problem is the big differences even on the hand. All together we don't consider this approach as promising enough.
-
-\subsubsection{Nearest Neighbour Classifier}
-
-Instead of just measuring values on the image we can also train a classifier on labeled examples. Labeled examples are unfortunately not available in the given data set, so we use a hands-on method to obtain samples. 
-
-Similar to the histogram method we can just sample a window of 6-by-6 pixels in the picture center as objects with label $y_1$. Additionally we can use depth data to obtain samples from the background. Every pixel that has a different depth value as the hand can be taken as a sample with label $y_0$.
-
-A similar approach can be taken for video frames. Here we can apply background subtraction to obtain hand and background samples. This method is further described in the next paragraph.
-
-Once the classifier is trained it can be used to label the whole image. As we did not implement the classifier ourselves we don't go into detail about its functionality here and refer to standard pattern recognition literature.
+The example shows the likelihood for \autoref{fig:asl-set} one can easily see that the results are not satisfactory. Although big parts of the background are seperated properly, the method fails on image parts where the colour is similar to skin colour. This can be seen in at the face of the subject, as well as the yellow background. Another problem is the big differences even on the hand. All together we don't consider this approach as promising enough.
 
 \subsubsection{Background Subtraction}
 
@@ -229,30 +236,84 @@ For the calculation of the background frame we take an average across several fr
 p(y_1 | x) = e^{-\frac{||\bar{x}-x||)}{\sigma}}
 \label{eq:backg}
 \end{equation}
-Where $\bar{x}$ is the background, and $\sigma$ a scaling factor. 
+Where $\bar{x}$ is the background, and $\sigma$ a scaling factor.
+
+We implement this using the OpenCV API. Next some bluring we use \texttt{accumulatedSum()} to calculate the average image and \texttt{absdiff()} to subtract the background.
+
+An example for a described dissimilarity image can be seen in \autoref{fig:bg-subtr}. The method looks promising as the hand is clearly separable. However, if we move the hand slowly, or the lightning conditions are bad big parts of the hand are also taken as background.
+
+\begin{figure}
+	\centering
+	\includegraphics[height=3cm]{bg-subtr}
+	\label{fig:tm-segment}
+	\caption{Dissimilarity image for background subtraction}
+\end{figure}
+
+\subsubsection{Depth Segmentation}
+
+For the ASL-set depth data is available. An example can be seen in \autoref{fig:asl-depth}, where the depth data for \autoref{fig:asl-set} is displayed in grayscale. The low resolution of the data is apperant as only about 5 different levels are visible. Although it enables us to separate the background partly, for most pictures it is not enough to segment the hand entirely. However, we can use the method in combination with other segmentation methods.
+
+We measure the depth at the center of the image and take it as baseline. Then we calculate the likelihood as follows:
+
+\begin{equation}
+p(y_1 | x) = e^{-\frac{||x_{center}-x||)}{\sigma}}
+\label{eq:backg}
+\end{equation}
+Where $x_ {center}$ is depth value at the center of the image, and $\sigma$ a scaling factor.
+
+Also here the implementation is quite straight forward. The image is stored in a similar way as a grayscale image. Thus we can subtract the depth value of the center from the whole image and obtain the distance matrix. 
+
+\subsubsection{Nearest Neighbour Classifier}
+
+Instead of just measuring values on the image we can also train a classifier on labeled examples. As we want to do the segmentation for the video in real-time, we need a classifier that can be trained quickly. This makes the knn-classifier a good choice.
+
+Labeled examples are unfortunately not available in the given data set, so we use a hands-on method to obtain those. Similar to the histogram method we sample a window of 6-by-6 pixels in the picture center as objects with label $y_1$. Additionally we can use depth segmentation or background subtraction to obtain background samples with label $y_0$. 
+
+Once the classifier is trained it can be used to label the whole image. As we did not implement the classifier ourselves we don't go into detail about its functionality here and refer to standard pattern recognition literature.
+
+For the implementation we use the 3-nearest-neighbour implementation from \texttt{sklearn}. The library allows training a model and obtaining predictions.
 
 \subsubsection{Markov Random Field}
 
 A Markov Random Field (MRF) [TODO REF] enables the incorporation of spatial conditions with label probabilities. We use it to combine these spatial conditions with several of the methods described before.
 
-The likelihood we define as a weighted sum of the score of the nearest neighbour classifier and of the background calculation. This can be formulated as follows:
+We apply the depth segmentation and background subtraction model to get soft labels for back and foreground. Additionally we train the knn-classifier as described and obtain another set of soft labels for the image. Then we can define the combined likelihood as a weighted sum of the score of the nearest neighbour classifier and of the background calculation. This can be formulated as follows:
 \begin{equation}
 p(y_1 | x) = \alpha * s_{knn}(_1 | x) + \beta * s_{backgr}(x_1 | x) 
 \end{equation}
-With $\alpha$ and $\beta$ as weights.
-
-Depending on whether we apply the model on the ASL-set or the video frame we can use background subtraction or depth data to obtain the background score. In both cases we use a model as described in \autoref{eq:backg}.
+With $\alpha$ and $\beta$ as weights and $s_{knn}$ and $s_backgr$ as the respective soft labels.
 
 For defining spatial structures we take the image gradient. We want the edge value to drop when there was an edge in the initial image. Therefore we assign edges on y and x axis with the respective gradients $I_y, I_x$ multiplied by -1.
 
 In total this gives us the following Markov Random Field:
 \begin{center}
 
-\input{mrf_drawing.tex}
+%\input{mrf_drawing.tex}
 
 \end{center}
 
-The final labelling we obtain with the maxflow graph cut algorithm.
+This way we incorporate information of spatial structures like edges and corners, colour information as well as movement/depth information in our model. The final labelling we obtain with the maxflow graph cut algorithm.
+
+For the implementation we use the \texttt{maxflow} package for python. The package allows us to define a graph and to assign weights according to \autoref{fig:mrf-graph}. After that we can execute the maxflow algorithm and obtain the labeled image. The first result still contains some noise. Therefore we apply several bluring/eroding and closing operations, using OpenCV, to obtain a cleaner result.
+
+An example for the method can be seen in \autoref{fig:mrf-example} and \autoref{fig:mrf-example-video}. The results look quite promising and in this first evaluation we consider it as our best method so far.
+
+\begin{figure}
+	\centering
+	\begin{minipage}{0.4\linewidth}
+		\centering
+		\includegraphics[height=3cm]{mrf}
+		\label{fig:mrf-example}
+		\caption{Segmentation with Markov Random Field on ASL-set}
+	\end{minipage}
+	\hfill
+	\begin{minipage}{0.4\linewidth}
+		\centering
+		\includegraphics[height=3cm]{mrf-video}
+		\label{fig:mrf-example-video}
+		\caption{Video Segmentation with Markov Random Field}
+	\end{minipage}
+\end{figure}
 
 
 \subsection{Representation}
@@ -261,23 +322,61 @@ Once the hand is properly segmented from the background we need to define descri
 
 Therefore we mainly worked on region-based descriptors. The approaches are described in the following.
 
+\subsubsection{Grayscale-Pixel}
+
+This can be seen as one of the most straight-forward representation. We convert the segmented image to a grayscale image, vectorize it and obtain the feature vector.
+
+The drawback of the method is that less important features not particularly filtered, which results in a huge feature vector. These are generally harder to classify (Curse of dimensionality). Additionally the representation is not rotation/scale invariant.
+
 \subsubsection{Edge-Pixel}
 
-A lot of information about the shape is contained in the edges. If we are able to detect the important edges, we can take the contours of the hand as a shape representation. Therefore we apply the Canny edge detection algorithm (PUT REF) and use the resulting picture as features. TODO
+A lot of information about the shape is contained in the edges. If we are able to detect the important edges, we can take the contours of the hand as a shape representation. Therefore we apply the Canny edge detection algorithm [TODO REF] to obtain a binary image with the most important edges. These binary images are vectorized and used as feature vectors.
+
+This method still leads to a high feature vector and is similar to the grayscale pixel approach not rotation/scale invariant.
 
 \subsubsection{Histogram of Gradients}
 
+HoG-features [TODO REF] are commonly used for object detection. The image gradient is calculated for the whole image. Then in a fixed window size a histogram is formed containing the distribution of image gradients.
+
+These features incorporate change in intensity value and should therefore be more informative than the simple Edge-Pixel representation. Especially because the slight changes in shape of the fingers on the hand can be detected.
+
+However, the same drawback as described in the previous paragraphs holds. The representation is not rotation/scale invariant.
+
+In contrast to the first two methods we need our own implementation for HoG-features. We use OpenCV to obtain the image gradients, subsequently we calcualate the angular and magnitude using numpy functions.
+
 \subsubsection{Bag of HoGs}
+
+To compensate for the rotation invariance we apply a "Bag-of-" method. Here we apply a KMeans clustering to obtain the most common histograms of the ASL-dataset. Then we represent Each object by the distance to this codebook. Inspired by MILES [TODO REF] we calculate the distance as follows:
+
+\begin{equation}
+	\phi(x) = min\{ e^{||x-x_{codebook}||}\}
+\end{equation}
+
+Thus the distance of a image to a code word is defined by the distance of its closest instance. The measure should give a high similarity if the HoGs of two objects are similar even if they are at different places in the image.
+
+This method basically builds upon the previous method. After having obtained the HoG-features for all images we use KMeans clustering from the sklearn library to get the codebook.
 
 \subsubsection{Principal Component Analysis}
 
+A general way to deal with high dimensionality or less informative features is principal component analysis [TODO REF]. Here we transform the feature space by keeping the maximal variance. We evaluate PCA on top of the previously described methods. The principal components are chosen in a way that 90\% of the variance is kept.
+
+Also here we use the sklearn library. It provides as with functions to scale the data, as well as to apply PCA.
+
 \subsection{Classification}
 
-\subsubsection{Nearest Neighbour}
+After having segmented the image and transformed it to a representation we can train a classifier. The focus of the work was on the preceeding steps, which is why we only evaluate several standard classifiers. These are:
 
-\subsubsection{Support Vector Machine}
+\begin{itemize}
+	\item Nearest Neighbour, because it can be trained quickly 
+	\item Linear Support Vector Machine, because it can cope with large feature dimensions
+	\item Neural Network, because it generally performs well
+\end{itemize}
 
-\subsubsection{Neural Network}
+In the video the user will not change the shown letter every couple of milliseconds. Thus we have several frames per sample available and can exploit that for classification. 
+
+We take a sequence of 5 frames per sample and classify each. The final prediction is based on a majority vote. Additionally we can set a "confidence" threshold to avoid misclassification. If not at least 75 \% of the predictions are the same, we reject the classification and a "Letter not recognized" is displayed on the screen.
+
+The majority voting we implement ourselves. The classifiers are taken from sklearn library.
 
 \section{Evaluation}
 \label{sec:eval}
@@ -331,19 +430,65 @@ TODO bla bla
 
 TODO put confusion matrix for best one
 
-\begin{table}[h]
-\caption{An Example of a Table}
+\begin{table*}[h]
+\caption{Confusion Matrix}
 \label{table_example}
 \begin{center}
-\begin{tabular}{|c||c|}
+\begin{tabular}{|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|}
 \hline
-One & Two\\
+ &A & B & C & D & E & F & G & H & I &K&L&M&N&O&P&Q&R&S&T&U&V&W&X&Y\\
 \hline
-Three & Four\\
+A &  &  &  &  &  &  &  &  & & & & & & & & & & & & & & &  \\
+\hline
+B &  &  &  &  &  &  &  &  & & & & & & & & & & & & & & &  \\
+\hline
+C &  &  &  &  &  &  &  &  & & & & & & & & & & & & & & &  \\
+\hline
+D &  &  &  &  &  &  &  &  & & & & & & & & & & & & & & &  \\
+\hline
+E &  &  &  &  &  &  &  &  & & & & & & & & & & & & & & &  \\
+\hline
+F &  &  &  &  &  &  &  &  & & & & & & & & & & & & & & &  \\
+\hline
+G &  &  &  &  &  &  &  &  & & & & & & & & & & & & & & &  \\
+\hline
+H &  &  &  &  &  &  &  &  & & & & & & & & & & & & & & &  \\
+\hline
+I &  &  &  &  &  &  &  &  & & & & & & & & & & & & & & &  \\
+\hline
+K &  &  &  &  &  &  &  &  & & & & & & & & & & & & & & &  \\
+\hline
+L &  &  &  &  &  &  &  &  & & & & & & & & & & & & & & &  \\
+\hline
+M &  &  &  &  &  &  &  &  & & & & & & & & & & & & & & &  \\
+\hline
+N &  &  &  &  &  &  &  &  & & & & & & & & & & & & & & &  \\
+\hline
+O &  &  &  &  &  &  &  &  & & & & & & & & & & & & & & &  \\
+\hline
+P &  &  &  &  &  &  &  &  & & & & & & & & & & & & & & &  \\
+\hline
+Q &  &  &  &  &  &  &  &  & & & & & & & & & & & & & & &  \\
+\hline
+R &  &  &  &  &  &  &  &  & & & & & & & & & & & & & & &  \\
+\hline
+S &  &  &  &  &  &  &  &  & & & & & & & & & & & & & & &  \\
+\hline
+T &  &  &  &  &  &  &  &  & & & & & & & & & & & & & & &  \\
+\hline
+U &  &  &  &  &  &  &  &  & & & & & & & & & & & & & & &  \\
+\hline
+V &  &  &  &  &  &  &  &  & & & & & & & & & & & & & & &  \\
+\hline
+W &  &  &  &  &  &  &  &  & & & & & & & & & & & & & & &  \\
+\hline
+X &  &  &  &  &  &  &  &  & & & & & & & & & & & & & & &  \\
+\hline
+Y &  &  &  &  &  &  &  &  & & & & & & & & & & & & & & &  \\
 \hline
 \end{tabular}
 \end{center}
-\end{table}
+\end{table*}
 
 
 \section{CONCLUSIONS}

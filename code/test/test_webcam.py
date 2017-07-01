@@ -19,7 +19,7 @@ roi_top = 0
 roi_bottom = 0
 
 preprocessor = PreprocessorVideo(BackgroundSubtractor(0.5), SegmenterVideo())
-estimator = EstimatorVideo("../../resource/models/model_asl.pkl")
+estimator = EstimatorVideo("../../resource/models/model_eqhist.pkl")
 num_frames = 0
 while keypress != ord("q"):
     # observe the keypress by the user

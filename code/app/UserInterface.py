@@ -1,4 +1,3 @@
-
 import cv2
 import imutils
 from numpy.ma import floor
@@ -32,60 +31,63 @@ class UserInterface:
             # keep looping, until interrupted
             keypress = cv2.waitKey(1) & 0xFF
             calibrate_print_flag = calibrated_print_flag = False
+            letter_last = None
+            (grabbed, frame) = self.camera.read()
+            frame = self.format_frame(frame)
+            (height, width) = frame.shape[:2]
+            # get the ROI
+            self.set_roi(int(floor(1 / 2 * width)), int(floor(3 / 4 * width)), int(floor(1 / 3 * height)),
+                         int(floor(2 / 3 * height)))
+
             while keypress != ord("q"):
-                # observe the keypress by the user
-                keypress = cv2.waitKey(10) & 0xFF
-                # get the current frame
                 (grabbed, frame) = self.camera.read()
+                frame = self.format_frame(frame)
 
-                # resize the frame
-                frame = imutils.resize(frame, width=800)
-                # flip the frame so that it is not the mirror view
-                frame = cv2.flip(frame, 1)
+                keypress = cv2.waitKey(10) & 0xFF
 
-                # clone the frame
-                clone = frame.copy()
-                (height, width) = frame.shape[:2]
-                # get the ROI
-                self.set_roi(int(floor(1 / 2 * width)), int(floor(3 / 4 * width)), int(floor(1 / 3 * height)),
-                             int(floor(2 / 3 * height)))
+                frame = self.draw_roi(frame)
 
-                # draw roi
-                cv2.rectangle(clone, (self.roi_left, self.roi_top), (self.roi_right, self.roi_bottom), (0, 255, 0),
-                              2)
+                cv2.imshow("Video Feed", frame)
 
-                roi = frame[self.roi_top:self.roi_bottom, self.roi_left:self.roi_right]
-
-                if roi is None:
-                    print("roi is null")
-                    return
-                # display the frame
-
-                cv2.imshow("Video Feed", clone)
-
-                # pass frame to frame handler
+                # pass roi to frame handler
+                roi = self.get_roi(frame)
                 self.frame_handler.add_frame(roi)
-
-                if self.frame_handler.is_ready_to_calibrate() and not calibrate_print_flag:
-                    print("Put your hand in the green box and press c to calibrate...")
-                    calibrate_print_flag = True
-                if self.frame_handler.is_calibrated() and not calibrated_print_flag:
-                    print("Calibrated..")
-                    calibrated_print_flag = True
-
-                if keypress == ord('c') and \
-                        self.frame_handler.is_ready_to_calibrate() and not self.frame_handler.is_calibrated():
-                    self.frame_handler.start_calibration()
 
                 # print letter
                 if self.frame_handler.is_calibrated():
                     letter = self.frame_handler.get_letter()
-                    if letter is -1:
-                        print("No letter recognized")
-                    elif letter is not None:
-                        print("Recognized letter: " + self.letters[letter])
+                    if letter is not letter_last:
+                        if letter is -1:
+                            print("No letter recognized")
+                        elif letter is not None:
+                            print("Recognized letter: " + self.letters[letter])
+                        letter_last = letter
+                else:
+                    if self.frame_handler.is_ready_to_calibrate():
+                        if keypress == ord('c'):
+                            self.frame_handler.start_calibration(roi)
+                        if not calibrate_print_flag:
+                            print("Put your hand in the green box and press c to calibrate...")
+                            calibrate_print_flag = True
+                    if self.frame_handler.is_calibrated() and not calibrated_print_flag:
+                        print("Calibrated..")
+                        calibrated_print_flag = True
 
             # free up memory
             self.camera.release()
-            self.frame_handler.stop_()
+            self.frame_handler.stop()
             cv2.destroyAllWindows()
+
+    def format_frame(self, frame):
+        frame = imutils.resize(frame, width=800)
+        # flip the frame so that it is not the mirror view
+        frame = cv2.flip(frame, 1)
+        # clone the frame
+        return frame.copy()
+
+    def get_roi(self, frame):
+        return frame[self.roi_top:self.roi_bottom, self.roi_left:self.roi_right]
+
+    def draw_roi(self, frame):
+        return cv2.rectangle(frame, (self.roi_left, self.roi_top), (self.roi_right, self.roi_bottom), (0, 255, 0),
+                             2)

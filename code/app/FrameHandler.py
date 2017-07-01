@@ -10,7 +10,6 @@ from preprocessing.preprocessing_asl import extract_descriptor
 
 class FrameHandler(threading.Thread):
     frame_queue = Queue()
-    calibrate = threading.Event()
     ready_to_calibrate = threading.Event()
     calibrated = threading.Event()
     stop_ = threading.Event()
@@ -27,33 +26,31 @@ class FrameHandler(threading.Thread):
         num_frames = 0
         while not self.stop_.is_set():
             frame = self.frame_queue.get(True)
-            # convert the roi to grayscale and blur it
 
-            # to get the background, keep looking till a threshold is reached
-            # so that our running average model gets calibrated
-            if not self.preprocessor.calibrated:
-                if num_frames < 30:
-                    self.preprocessor.calibrate_background(frame)
-                else:
-                    self.ready_to_calibrate.set()
-                    self.calibrate.wait()
-                    self.preprocessor.calibrate_object(frame)
-                    self.calibrated.set()
-            else:
+            if self.calibrated.is_set():
                 # segment the hand region
                 hand = self.preprocessor.preprocess(frame)
 
                 self.estimator.stack_descr(self.preprocessor.extract_descriptor(hand))
-                if (num_frames - 30) % 15 == 0:
+                if num_frames % 5 == 0:
                     # every X frames classify and apply majority vote
                     self.s_letter.acquire()
                     self.detected_letter = self.estimator.predict()
                     self.s_letter.release()
-            # increment the number of frames
+            else:
+                if num_frames < 30:
+                    self.preprocessor.calibrate_background(frame)
+                else:
+                    self.ready_to_calibrate.set()
+                    self.calibrated.wait()
+                    num_frames = 0
+
             num_frames += 1
 
-    def start_calibration(self):
-        self.calibrate.set()
+    def start_calibration(self, frame):
+        self.preprocessor.calibrate_object(frame)
+        self.calibrated.set()
+        self.ready_to_calibrate.clear()
 
     def stop(self):
         self.stop_.set()

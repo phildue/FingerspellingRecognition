@@ -1,12 +1,10 @@
-import random
-
 import cv2
 import numpy as np
 
-from daq.fileaccess import read_image, read_image_asl
-from preprocessing.mrf import MarkovRandomField
+from daq.fileaccess import read_image_asl
 from preprocessing.segmentation import get_classifier_score, get_background_score, get_weighted_sum, get_smooth_grid, \
     extract_label
+from preprocessing.segmentation.MarkovRandomField import MarkovRandomField
 
 
 def colourbased_skin_segmentation(image, lower_thresh=np.array([0, 80, 80], dtype="uint8"),

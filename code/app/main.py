@@ -6,7 +6,7 @@ from app.SegmenterVideo import SegmenterVideo
 from app.UserInterface import UserInterface
 
 preprocessor = PreprocessorVideo(BackgroundSubtractor(0.5), SegmenterVideo())
-frame_handler = FrameHandler(preprocessor, EstimatorVideo("../../resource/models/model_eqhist.pkl"))
+frame_handler = FrameHandler(preprocessor, EstimatorVideo("../../resource/models/model_hog_asl.pkl"))
 
 ui = UserInterface(frame_handler)
 

@@ -29,21 +29,21 @@ class UserInterface:
         if self.camera is None:
             self.camera = cv2.VideoCapture(0)
             # keep looping, until interrupted
-            keypress = cv2.waitKey(1) & 0xFF
+            keypress = cv2.waitKey(20) & 0xFF
             calibrate_print_flag = calibrated_print_flag = False
             letter_last = None
             (grabbed, frame) = self.camera.read()
             frame = self.format_frame(frame)
             (height, width) = frame.shape[:2]
             # get the ROI
-            self.set_roi(int(floor(1 / 2 * width)), int(floor(3 / 4 * width)), int(floor(1 / 3 * height)),
-                         int(floor(2 / 3 * height)))
+            self.set_roi(int(floor(1 / 2 * width)), int(floor(4 / 4 * width)), int(floor(0 / 3 * height)),
+                         int(floor(1 / 2 * height)))
 
             while keypress != ord("q"):
                 (grabbed, frame) = self.camera.read()
                 frame = self.format_frame(frame)
 
-                keypress = cv2.waitKey(10) & 0xFF
+                keypress = cv2.waitKey(50) & 0xFF
 
                 frame = self.draw_roi(frame)
 
@@ -51,6 +51,8 @@ class UserInterface:
 
                 # pass roi to frame handler
                 roi = self.get_roi(frame)
+                roi = cv2.flip(roi, 1)
+
                 self.frame_handler.add_frame(roi)
 
                 # print letter

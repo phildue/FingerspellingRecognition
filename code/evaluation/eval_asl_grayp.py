@@ -6,7 +6,7 @@ from daq.fileaccess import get_paths_asl
 from daq.gendata import load_data_sign, gendata_sign
 
 n_data = 2500
-data, labels = gendata_sign(get_paths_asl("../../resource/dataset/fingerspelling5/dataset5/"))
+data, labels = load_data_sign("../../resource/models/descriptors_pixel.pkl", "../../resource/models/labels.pkl")
 
 model = get_pipe()
 results = cross_val_score(model, data, labels.ravel(), cv=6)

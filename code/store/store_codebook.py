@@ -1,8 +1,8 @@
 from sklearn.externals import joblib
 
 from daq.fileaccess import get_paths_asl, read_image_asl
-from preprocessing.bag_of_hogs import gen_codebook
 from preprocessing.preprocessing_asl import preprocesss
+from preprocessing.representation.BagOfHogs import gen_codebook
 
 paths_dict = get_paths_asl("../../resource/dataset/fingerspelling5/dataset5/")
 codebook_file = '../../resource/models/codebook_total.pkl'

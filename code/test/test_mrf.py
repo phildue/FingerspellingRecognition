@@ -2,8 +2,8 @@ import cv2
 import maxflow as mf
 import numpy as np
 
-from app.HistSegmenter import HistSegmenter
-from preprocessing.mrf import MarkovRandomField
+from preprocessing.segmentation.ColourHistogram import ColourHistogram
+from preprocessing.segmentation.MarkovRandomField import MarkovRandomField
 
 
 def example():
@@ -30,7 +30,7 @@ img = cv2.imread("../../resource/dataset/fingerspelling5/dataset5/A/a/color_0_00
 
 cv2.imshow("Picture", img)
 likelihood = img.copy()
-histmodel = HistSegmenter("../../resource/models/skinhist_asl.npy")
+histmodel = ColourHistogram("../../resource/models/skinhist_asl.npy")
 winsize = 7
 step = 3
 for y in range(0, img.shape[0] - winsize + 1, step):

@@ -1,12 +1,12 @@
 import cv2
 
-from app.HistSegmenter import HistSegmenter
+from preprocessing.segmentation.ColourHistogram import ColourHistogram
 
 img = cv2.imread("../../resource/dataset/fingerspelling5/dataset5/A/a/color_0_0004.png")
 
 cv2.imshow("Picture", img)
 likelihood = img.copy()
-histmodel = HistSegmenter("../../resource/models/skinhist_asl.npy")
+histmodel = ColourHistogram("../../resource/models/skinhist_asl.npy")
 winsize = 7
 
 for y in range(0, img.shape[0] - winsize + 1, 3):

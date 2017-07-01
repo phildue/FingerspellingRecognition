@@ -4,7 +4,7 @@ from numpy.linalg import norm
 from numpy.ma import floor
 
 from daq.fileaccess import get_paths_asl, read_image
-from preprocessing.color_hist import colour_hist
+from preprocessing.segmentation.ColourHistogram import ColourHistogram
 
 paths_dict = get_paths_asl(sets=["E"], alphabet=["a"])
 winsize = 3
@@ -27,7 +27,7 @@ n_bins = 32
 bin_range = 255 / n_bins
 hist = np.zeros(shape=(1, 3 * n_bins))
 for sample in samples:
-    hist += colour_hist(sample)
+    hist += ColourHistogram.colour_hist(sample)
 
 hist = hist.reshape(1, -1)
 hist /= norm(hist)

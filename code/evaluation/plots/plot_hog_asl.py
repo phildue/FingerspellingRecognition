@@ -1,10 +1,8 @@
-import random
-
 import cv2
 
-from daq.fileaccess import read_image, read_image_asl
-from preprocessing.hog import get_hog
-from preprocessing.preprocessing_asl import preprocess, extract_descriptor
+from daq.fileaccess import read_image_asl
+from preprocessing.preprocessing_asl import preprocess
+from preprocessing.representation.HistogramOfGradients import get_hog
 
 example_image_file = "../../../resource/dataset/fingerspelling5/dataset5/A/a/color_0_0027.png"
 # read image

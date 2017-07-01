@@ -1,11 +1,10 @@
 import cv2
 import numpy as np
-from skimage.segmentation import slic
 from sklearn.neighbors import KNeighborsClassifier
 
 from exceptions.exceptions import NotTrained
-from preprocessing.mrf import MarkovRandomField
 from preprocessing.segmentation import get_background_score, get_weighted_sum, get_smooth_grid, extract_label
+from preprocessing.segmentation.MarkovRandomField import MarkovRandomField
 
 
 class SegmenterVideo:

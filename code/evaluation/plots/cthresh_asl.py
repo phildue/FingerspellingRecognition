@@ -22,7 +22,7 @@ def colourbased_skin_segmentation(image, lower_thresh=np.array([0, 80, 80], dtyp
     return likelihood
 
 
-example_image_file = "../../../resource/dataset/fingerspelling5/dataset5/A/a/color_0_0027.png"
+example_image_file = "../../../resource/examples/color_0_0028.png"
 # read image
 img, _ = FileProviderAsl.read_img(example_image_file)
 

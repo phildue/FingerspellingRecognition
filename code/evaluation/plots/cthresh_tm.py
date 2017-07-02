@@ -4,13 +4,7 @@ import cv2
 
 from datagen.FileProvider import FileProvider
 
-letters = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t",
-           "u",
-           "v", "w", "x", "y"]
-
-letter = str(random.choice(letters))
-example_image_file = "../../../resource/dataset/tm/" + letter + str(
-    random.choice(range(1, 40))) + ".tif"
+example_image_file = "../../../resource/examples/d19.tif"
 # read image
 img = FileProvider.read_img(example_image_file)
 

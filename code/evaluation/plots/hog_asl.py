@@ -5,7 +5,7 @@ from preprocessing.PreProcessorAsl import PreProcessorAsl
 from preprocessing.representation.HistogramOfGradients import HistogramOfGradients
 from preprocessing.segmentation.MRFAsl import MRFAsl
 
-example_image_file = "../../../resource/dataset/fingerspelling5/dataset5/A/a/color_0_0027.png"
+example_image_file = "../../../resource/examples/color_0_0028.png"
 # read image
 img = FileProviderAsl.read_img(example_image_file)
 

@@ -4,7 +4,7 @@ import numpy as np
 from datagen.FileProviderAsl import FileProviderAsl
 from preprocessing.segmentation.MRFAsl import MRFAsl
 
-example_image_file = "../../../resource/dataset/fingerspelling5/dataset5/A/a/color_0_0028.png"
+example_image_file = "../../../resource/examples/color_0_0028.png"
 # read image
 img, img_depth = FileProviderAsl.read_img(example_image_file)
 

@@ -1,7 +1,6 @@
 import threading
 from multiprocessing import Queue
 
-
 from classification.EstimatorVideo import EstimatorVideo
 from preprocessing.PreProcessorVideo import PreProcessorVideo
 
@@ -14,7 +13,7 @@ class FrameHandler(threading.Thread):
     s_letter = threading.Lock()
     detected_letter = None
 
-    def __init__(self, preprocessor: PreProcessorVideo(), estimator=EstimatorVideo):
+    def __init__(self, preprocessor=PreProcessorVideo(), estimator=EstimatorVideo()):
         threading.Thread.__init__(self)
         self.preprocessor = preprocessor
         self.estimator = estimator
@@ -29,7 +28,7 @@ class FrameHandler(threading.Thread):
                 # segment the hand region
                 hand = self.preprocessor.preprocess(frame)
 
-                self.estimator.stack_descr(self.preprocessor.extract_descriptor(hand))
+                self.estimator.stack_descr(self.preprocessor.get_descr(hand))
                 if num_frames % 5 == 0:
                     # every X frames classify and apply majority vote
                     self.s_letter.acquire()

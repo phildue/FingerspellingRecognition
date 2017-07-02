@@ -1,12 +1,15 @@
-from app.BackgroundSubtractor import BackgroundSubtractor
-from app.EstimatorVideo import EstimatorVideo
 from app.FrameHandler import FrameHandler
-from app.PreprocessorVideo import PreprocessorVideo
-from app.SegmenterVideo import SegmenterVideo
 from app.UserInterface import UserInterface
+from classification.EstimatorVideo import EstimatorVideo
+from preprocessing.PreProcessorVideo import PreProcessorVideo
+from preprocessing.representation.HistogramOfGradients import HistogramOfGradients
+from preprocessing.segmentation.BackgroundSubtractor import BackgroundSubtractor
+from preprocessing.segmentation.MRFVideo import MRFVideo
 
-preprocessor = PreprocessorVideo(BackgroundSubtractor(0.5), SegmenterVideo())
-frame_handler = FrameHandler(preprocessor, EstimatorVideo("../../resource/models/model_eqhist.pkl"))
+preprocessor = PreProcessorVideo(BackgroundSubtractor(0.5), segmenter=MRFVideo(),
+                                 descriptor=HistogramOfGradients(window_size=6, n_bins=8))
+
+frame_handler = FrameHandler(preprocessor, EstimatorVideo("../../resource/models/model_hog_asl.pkl"))
 
 ui = UserInterface(frame_handler)
 

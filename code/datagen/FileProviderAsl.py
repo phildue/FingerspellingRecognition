@@ -1,6 +1,6 @@
 import os
 
-from daq.FileProvider import FileProvider
+from datagen.FileProvider import FileProvider
 
 
 class FileProviderAsl(FileProvider):

@@ -1,7 +1,7 @@
 from sklearn.externals import joblib
 
 from classification.pipe import get_pipe
-from daq.DatasetGenerator import DatasetGenerator
+from datagen.DatasetGenerator import DatasetGenerator
 
 dir_dataset = '../../resource/dataset/tm'
 model_file = '../../resource/models/model_hog_asl.pkl'

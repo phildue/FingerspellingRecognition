@@ -3,7 +3,7 @@ import numpy as np
 from numpy.linalg import norm
 from numpy.ma import floor
 
-from daq.FileProviderAsl import FileProviderAsl
+from datagen.FileProviderAsl import FileProviderAsl
 from preprocessing.segmentation.ColourHistogram import ColourHistogram
 
 paths_dict = FileProviderAsl(sets=["E"], alphabet=["a"]).img_file_paths

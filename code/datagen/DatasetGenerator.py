@@ -1,7 +1,7 @@
 import numpy as np
 from sklearn.externals import joblib
 
-from daq.FileProvider import FileProvider
+from datagen.FileProvider import FileProvider
 from preprocessing.PreProcessor import PreProcessor
 
 

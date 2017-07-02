@@ -1,6 +1,6 @@
 import random
 
-from daq.fileaccess import get_paths_asl, read_image_asl
+from datagen.fileaccess import get_paths_asl, read_image_asl
 from preprocessing.preprocessing_asl import preprocess
 from preprocessing.representation.BagOfHogs import BagOfHogs
 

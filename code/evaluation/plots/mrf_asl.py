@@ -1,7 +1,7 @@
 import cv2
 import numpy as np
 
-from daq.FileProviderAsl import FileProviderAsl
+from datagen.FileProviderAsl import FileProviderAsl
 from preprocessing.segmentation.MRFAsl import MRFAsl
 
 example_image_file = "../../../resource/dataset/fingerspelling5/dataset5/A/a/color_0_0028.png"

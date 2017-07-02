@@ -1,6 +1,6 @@
 import cv2
 
-from daq.fileaccess import read_image_asl
+from datagen.fileaccess import read_image_asl
 from preprocessing.preprocessing_asl import preprocess
 from preprocessing.representation.HistogramOfGradients import get_hog
 

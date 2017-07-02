@@ -2,7 +2,7 @@ import random
 
 import cv2
 
-from daq.FileProvider import FileProvider
+from datagen.FileProvider import FileProvider
 from preprocessing.PreProcessorTm import PreProcessorTm
 
 letters = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t",

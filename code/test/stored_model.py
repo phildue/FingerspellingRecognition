@@ -3,7 +3,7 @@ import random
 import cv2
 from sklearn.externals import joblib
 
-from daq.FileProvider import FileProvider
+from datagen.FileProvider import FileProvider
 from exceptions.exceptions import NoRoiFound
 from preprocessing.PreProcessorTm import PreProcessorTm
 

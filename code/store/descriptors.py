@@ -1,5 +1,5 @@
-from daq.DatasetGenerator import DatasetGenerator
-from daq.FileProviderAsl import FileProviderAsl
+from datagen.DatasetGenerator import DatasetGenerator
+from datagen.FileProviderAsl import FileProviderAsl
 from preprocessing.PreProcessorAsl import PreProcessorAsl
 from preprocessing.representation.HistogramOfGradients import HistogramOfGradients
 from preprocessing.segmentation.MRFAsl import MRFAsl

@@ -2,7 +2,7 @@ import random
 
 import cv2
 
-from daq.FileProviderAsl import FileProviderAsl
+from datagen.FileProviderAsl import FileProviderAsl
 from preprocessing.PreProcessorAsl import PreProcessorAsl
 from preprocessing.representation.HistogramOfGradients import HistogramOfGradients
 from preprocessing.segmentation.MRFAsl import MRFAsl

@@ -3,7 +3,7 @@ import random
 import cv2
 import numpy as np
 
-from daq.fileaccess import read_image, read_image_asl
+from datagen.fileaccess import read_image, read_image_asl
 
 
 def colourbased_skin_segmentation(image, lower_thresh=np.array([0, 80, 80], dtype="uint8"),

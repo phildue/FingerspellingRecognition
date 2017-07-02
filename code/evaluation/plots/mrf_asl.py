@@ -40,7 +40,15 @@ graph, nodes = segmenter.create_graph((img_segment.shape[0], img_segment.shape[1
                                       combined_likelihood[:, :, 1],
                                       combined_likelihood[:, :, 0])
 
-segmented_image = segmenter.maxflow(graph, nodes)
+label_map = cv2.normalize(segmenter.maxflow(graph, nodes).astype(np.uint8), None, 0, 255, cv2.NORM_MINMAX)
+label_map = cv2.GaussianBlur(label_map, (3, 3), 2)
+
+kernel = np.ones((5, 5), np.uint8)
+
+label_map = cv2.morphologyEx(label_map, cv2.MORPH_CLOSE, kernel, iterations=5)
+_, label_map = cv2.threshold(label_map, 250, 255, cv2.THRESH_BINARY)
+img_extracted = img.copy()
+img_extracted[label_map == 0] = 0
 
 classifier_score = cv2.normalize(classifier_score, None, 0.0, 255.0, cv2.NORM_MINMAX)
 background_score = cv2.normalize(background_score, None, 0.0, 255.0, cv2.NORM_MINMAX)
@@ -52,5 +60,5 @@ cv2.imshow("Depth-Segmentation Likelihood", background_score.astype(np.uint8)[:,
 cv2.imshow("Combined Likelihood", combined_likelihood.astype(np.uint8)[:, :, 1])
 cv2.imshow("Ix", weight_x.astype(np.uint8))
 cv2.imshow("Iy", weight_y.astype(np.uint8))
-cv2.imshow("Segmented image", segmented_image)
+cv2.imshow("Segmented image", img_extracted)
 cv2.waitKey(0)

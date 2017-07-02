@@ -7,6 +7,9 @@ from preprocessing.segmentation.Segmenter import Segmenter
 
 
 class MRFAsl(MarkovRandomField):
+    def __init__(self, confidence_thresh=250):
+        self.confidence_thresh = confidence_thresh
+
     def get_label(self, img):
         img_depth = img[1]
         img = img[0]
@@ -37,7 +40,19 @@ class MRFAsl(MarkovRandomField):
 
         weight_x, weight_y = self.get_smooth_grid(img_segment)
 
-        graph, nodeids = self.create_graph(img.shape, weight_x, weight_y, likelihood_grid[:, :, 1],
+        graph, nodeids = self.create_graph((img.shape[0], img.shape[1]), weight_x, weight_y, likelihood_grid[:, :, 1],
                                            likelihood_grid[:, :, 0])
 
-        return self.maxflow(graph, nodeids)
+        label_map = cv2.normalize(self.maxflow(graph, nodeids).astype(np.uint8), None, 0, 255, cv2.NORM_MINMAX)
+        label_map = cv2.GaussianBlur(label_map, (3, 3), 2)
+
+        kernel = np.ones((5, 5), np.uint8)
+
+        label_map = cv2.morphologyEx(label_map, cv2.MORPH_CLOSE, kernel, iterations=5)
+
+        _, label_map = cv2.threshold(label_map, self.confidence_thresh, 255, cv2.THRESH_BINARY)
+
+        img_extracted = img.copy()
+        img_extracted[label_map == 0] = 0
+
+        return img_extracted

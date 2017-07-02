@@ -3,6 +3,7 @@ from abc import abstractmethod
 import cv2
 import maxflow as mf
 import numpy as np
+from sklearn.neighbors import KNeighborsClassifier
 
 from preprocessing.segmentation.Segmenter import Segmenter
 
@@ -14,7 +15,7 @@ class MarkovRandomField(Segmenter):
 
     def get_label_soft(self, img):
         print("Warning! MarkovRandomField doesnt provides soft labels! ")
-        self.get_label(img)
+        return self.get_label(img)
 
     @staticmethod
     def maxflow(graph, nodeids):
@@ -63,8 +64,8 @@ class MarkovRandomField(Segmenter):
         return background_score_grid
 
     def get_classifier_score(self, img, pixels_fg, pixels_bg):
-        pixels_fg = pixels_fg[random.randint(pixels_fg.shape[0], size=200), :]
-        pixels_bg = pixels_bg[random.randint(pixels_bg.shape[0], size=1000), :]
+        pixels_fg = pixels_fg[np.random.randint(pixels_fg.shape[0], size=200), :]
+        pixels_bg = pixels_bg[np.random.randint(pixels_bg.shape[0], size=1000), :]
 
         data = np.vstack([pixels_bg, pixels_fg])
         labels = np.vstack([np.zeros(shape=(pixels_bg.shape[0], 1)), np.ones(shape=(pixels_fg.shape[0], 1))])

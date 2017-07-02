@@ -1,9 +1,7 @@
-import random
-
 import cv2
 import numpy as np
 
-from datagen.fileaccess import read_image, read_image_asl
+from datagen.FileProviderAsl import FileProviderAsl
 
 
 def colourbased_skin_segmentation(image, lower_thresh=np.array([0, 80, 80], dtype="uint8"),
@@ -24,9 +22,9 @@ def colourbased_skin_segmentation(image, lower_thresh=np.array([0, 80, 80], dtyp
     return likelihood
 
 
-example_image_file = "../../resource/dataset/fingerspelling5/dataset5/A/a/color_0_0027.png"
+example_image_file = "../../../resource/dataset/fingerspelling5/dataset5/A/a/color_0_0027.png"
 # read image
-img, _ = read_image_asl(example_image_file)
+img, _ = FileProviderAsl.read_img(example_image_file)
 
 cv2.imshow('image', img)
 img = colourbased_skin_segmentation(img)

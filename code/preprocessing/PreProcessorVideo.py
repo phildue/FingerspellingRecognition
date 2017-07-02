@@ -6,8 +6,8 @@ from preprocessing.segmentation.MRFVideo import MRFVideo
 class PreProcessorVideo(PreProcessorAsl):
     calibrated = False
 
-    def __init__(self, background_subtractor, segmenter: MRFVideo, descriptor: Descriptor, confidence_thresh=110):
-        super().__init__(descriptor, segmenter, confidence_thresh)
+    def __init__(self, background_subtractor, segmenter: MRFVideo, descriptor: Descriptor):
+        super().__init__(descriptor, segmenter)
         self.background_subtractor = background_subtractor
         self.segmenter = segmenter
 

@@ -16,13 +16,13 @@ class PreProcessorAsl(PreProcessor):
         self.segmenter = segmenter
 
     def get_descr(self, img):
-        return self.descriptor.get_descr(img)
+        return self.descriptor.get_descr(img).reshape(1, -1)
 
     def preprocess(self, img):
         label_map = self.segmenter.get_label(img)
 
         img_extracted = img[0].copy()
-        img_extracted[label_map == 0] = 0
+        img_extracted[label_map == 0] = (0, 0, 0)
 
         img_extracted = cv2.cvtColor(img_extracted, cv2.COLOR_RGB2GRAY)
         img_extracted = cv2.resize(img_extracted, self.img_size)

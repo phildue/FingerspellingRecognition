@@ -13,7 +13,7 @@ class EstimatorVideo:
         self.trained = True
         self.votes = np.zeros(shape=self.n_letters)
 
-    def predict(self, ):
+    def predict(self):
         if np.max(self.votes) > self.iterations * 0.75:
             class_ = int(np.argmax(self.votes))
             self.votes = np.zeros(shape=self.n_letters)

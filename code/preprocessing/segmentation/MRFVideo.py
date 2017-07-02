@@ -45,10 +45,12 @@ class MRFVideo(MarkovRandomField):
         likelihood_grid = self.get_weighted_sum(classifier_score, background_score)
         weight_x, weight_y = self.get_smooth_grid(img)
 
-        graph, nodeids = self.create_graph(img.shape, weight_x, weight_y, likelihood_grid[:, :, 1],
+        graph, nodeids = self.create_graph((img.shape[0], img.shape[1]), weight_x, weight_y, likelihood_grid[:, :, 1],
                                            likelihood_grid[:, :, 0])
 
         label_map = self.maxflow(graph, nodeids)
+
+        label_map = cv2.normalize(label_map.astype(np.uint8), None, 0, 255, cv2.NORM_MINMAX)
 
         _, label_map = cv2.threshold(label_map, self.confidence_thresh, 255, cv2.THRESH_BINARY)
 

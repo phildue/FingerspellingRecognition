@@ -1,3 +1,5 @@
+import cv2
+
 from preprocessing.segmentation.BackgroundSubtractor import BackgroundSubtractor
 
 
@@ -8,4 +10,4 @@ class BackgroundSubtractorDummy(BackgroundSubtractor):
         self.test_img = test_img
 
     def get_background(self):
-        return self.test_img + self.diff_img
+        return cv2.cvtColor(self.test_img + self.diff_img, cv2.COLOR_RGB2GRAY)

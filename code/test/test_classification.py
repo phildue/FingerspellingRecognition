@@ -4,7 +4,7 @@ from sklearn.model_selection import cross_val_score
 from classification.pipe import get_pipe
 from daq.DatasetGenerator import load_data_sign, DatasetGenerator
 
-data, labels = DatasetGenerator.load_data_sign('../../resource/models/descriptors_pixel.pkl',
+data, labels = DatasetGenerator.load('../../resource/models/descriptors_pixel.pkl',
                                                '../../resource/models/labels.pkl')
 
 model = get_pipe()

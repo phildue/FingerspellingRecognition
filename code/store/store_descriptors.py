@@ -8,6 +8,6 @@ g = DatasetGenerator(file_provider=FileProviderAsl("../../resource/dataset/finge
                      preprocessor=PreProcessorAsl(segmenter=MRFAsl(),
                                                   descriptor=HistogramOfGradients(window_size=6, n_bins=8)))
 
-data, labels = g.gendata_sign(sample_size=2500)
+data, labels = g.generate(sample_size=2500)
 
-g.save_data(data, labels, '../../resource/models/', 'hog')
+g.save(data, labels, '../../resource/models/', 'hog')

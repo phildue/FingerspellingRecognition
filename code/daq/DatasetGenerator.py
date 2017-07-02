@@ -18,7 +18,7 @@ class DatasetGenerator:
                             "v", "w", "x", "y"]
 
     @staticmethod
-    def load_data_sign(sample_file_path, label_file_path):
+    def load(sample_file_path, label_file_path):
         data = joblib.load(sample_file_path)
         labels = joblib.load(label_file_path)
 
@@ -27,11 +27,11 @@ class DatasetGenerator:
         return data, labels
 
     @staticmethod
-    def save_data(data, labels, path: str, name: str):
+    def save(data, labels, path: str, name: str):
         joblib.dump(data, path + 'descriptors_' + name + '.pkl')
         joblib.dump(labels, path + 'labels_' + name + '.pkl')
 
-    def gendata_sign(self, sample_size=2500):
+    def generate(self, sample_size=2500):
 
         img_lists = self.file_provider.read_letters(sample_size, self.letters)
 

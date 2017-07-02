@@ -1,21 +1,16 @@
 import numpy as np
-from numpy.linalg import norm, inv
-from scipy.stats import entropy
-
-from preprocessing.color_hist import colour_hist, kl_divergence
+from numpy.linalg import norm
 
 from preprocessing.segmentation.Segmenter import Segmenter
 
 
 class ColourHistogram(Segmenter):
-    def __init__(self, img, filepath="../../resource/dataset/skin/skinhist_asl", sigma=50):
+    def __init__(self, filepath="../../resource/dataset/skin/skinhist_asl.npy", sigma=50):
         self.sigma = sigma
         self.skinhist = np.load(filepath)
 
-        self.img = img
-
     def get_label_soft(self, img):
-        return np.exp(-kl_divergence(self.skinhist, colour_hist(img)) / self.sigma)
+        return np.exp(-self.kl_divergence(self.skinhist, self.colour_hist(img)) / self.sigma)
 
     def get_label(self, img):
         soft_label = self.get_label_soft(img)

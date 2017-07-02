@@ -13,6 +13,9 @@ class MRFVideo(MarkovRandomField):
     trained = False
     background = None
 
+    def __init__(self, confidence_thresh=110):
+        self.confidence_thresh = confidence_thresh
+
     def train(self, average, image):
         self.background = average
 
@@ -45,4 +48,8 @@ class MRFVideo(MarkovRandomField):
         graph, nodeids = self.create_graph(img.shape, weight_x, weight_y, likelihood_grid[:, :, 1],
                                            likelihood_grid[:, :, 0])
 
-        return self.maxflow(graph, nodeids)
+        label_map = self.maxflow(graph, nodeids)
+
+        _, label_map = cv2.threshold(label_map, self.confidence_thresh, 255, cv2.THRESH_BINARY)
+
+        return label_map

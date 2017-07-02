@@ -1,9 +1,9 @@
 import threading
 from multiprocessing import Queue
 
-from app.PreprocessorVideo import PreprocessorVideo
 
 from classification.EstimatorVideo import EstimatorVideo
+from preprocessing.PreProcessorVideo import PreProcessorVideo
 
 
 class FrameHandler(threading.Thread):
@@ -14,7 +14,7 @@ class FrameHandler(threading.Thread):
     s_letter = threading.Lock()
     detected_letter = None
 
-    def __init__(self, preprocessor: PreprocessorVideo, estimator: EstimatorVideo):
+    def __init__(self, preprocessor: PreProcessorVideo(), estimator=EstimatorVideo):
         threading.Thread.__init__(self)
         self.preprocessor = preprocessor
         self.estimator = estimator

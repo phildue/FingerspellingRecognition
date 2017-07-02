@@ -52,7 +52,4 @@ class MRFAsl(MarkovRandomField):
 
         _, label_map = cv2.threshold(label_map, self.confidence_thresh, 255, cv2.THRESH_BINARY)
 
-        img_extracted = img.copy()
-        img_extracted[label_map == 0] = 0
-
-        return img_extracted
+        return label_map

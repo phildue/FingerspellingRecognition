@@ -14,7 +14,7 @@ example_image_file = "../../resource/dataset/tm/" + letter + str(
     random.choice(range(1, 40))) + ".tif"
 # read image
 img = FileProvider.read_img(example_image_file)
-pp = PreProcessorTm(roi_size=(60, 60))
+pp = PreProcessorTm(img_size=(60, 60))
 
 cv2.imshow('image', img)
 img = pp.preprocess(img)

@@ -21,11 +21,9 @@ cv2.imshow('image', img[0])
 
 img = pp.preprocess(img)
 cv2.imshow("after prefiltering", img)
-cv2.waitKey(0)
-
 descriptor = pp.get_descr(img)
 print("Descriptor: \n" + str(descriptor))
 # print("dim: \n" + str(descriptor.shape[1]))
-cv2.waitKey(10000)
+cv2.waitKey(30000)
 cv2.destroyAllWindows()
 exit(0)

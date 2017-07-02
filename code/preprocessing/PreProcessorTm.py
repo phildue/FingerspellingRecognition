@@ -3,26 +3,30 @@ import numpy as np
 
 from exceptions.exceptions import NoRoiFound, NoContoursFound
 from preprocessing.PreProcessor import PreProcessor
+from preprocessing.representation.Descriptor import Descriptor
+from preprocessing.representation.HistogramOfGradients import HistogramOfGradients
+from preprocessing.segmentation.GrayThresh import GrayThresh
 
 
 class PreProcessorTm(PreProcessor):
-    def __init__(self, im_size=(100, 120), roi_size=(30, 30)):
+    def __init__(self, descriptor: Descriptor = HistogramOfGradients(), img_size=(30, 30),
+                 segmenter=GrayThresh()):
         PreProcessor.__init__(self)
-        self.roi_size = roi_size
-        self.im_size = im_size
+        self.segmenter = segmenter
+        self.descriptor = descriptor
+        self.roi_size = img_size
 
     def get_descr(self, img):
-        pass
+        self.descriptor.get_descr(img)
 
     def preprocess(self, img):
         # find roi (hand), crop it, find edges
-        img_resized = cv2.resize(img, self.im_size)
-        img_gray = cv2.cvtColor(img_resized, cv2.COLOR_RGB2GRAY)
 
-        roi = self.get_roi(img_gray)
-        roi = cv2.resize(roi, self.roi_size)
+        labels = self.segmenter.get_label(img)
+        labels = self.crop_roi(labels)
+        labels = cv2.resize(labels, self.roi_size)
 
-        return roi
+        return labels
 
     def preprocess_all(self, imgs: [np.array]) -> [np.array]:
         img_pp = []
@@ -48,9 +52,8 @@ class PreProcessorTm(PreProcessor):
         return longest_contours
 
     @staticmethod
-    def get_roi(img, min_roi_size=50):
-        _, img_binary = cv2.threshold(img, 128, 255, cv2.THRESH_BINARY)
-        img_edges = cv2.Canny(img_binary, threshold1=50, threshold2=100)
+    def crop_roi(img, min_roi_size=50):
+        img_edges = cv2.Canny(img, threshold1=50, threshold2=100)
         _, contours, _ = cv2.findContours(img_edges, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
 
         contours = [c for c in contours if len(c) > 4]

@@ -13,7 +13,7 @@ letters = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "k", "l", "m", "n", "o",
 
 dir_dataset = '../../resource/dataset/tm'
 model = joblib.load('../../resource/models/model_tm.pkl')
-pp = PreProcessorTm(roi_size=(60, 60))
+pp = PreProcessorTm(img_size=(60, 60))
 cmd = 'y'
 while cmd != 'n':
     letter = str(random.choice(letters))

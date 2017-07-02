@@ -3,11 +3,14 @@ import numpy as np
 
 from preprocessing.PreProcessor import PreProcessor
 from preprocessing.representation.Descriptor import Descriptor
+from preprocessing.representation.HistogramOfGradients import HistogramOfGradients
+from preprocessing.segmentation.MRFAsl import MRFAsl
 from preprocessing.segmentation.Segmenter import Segmenter
 
 
 class PreProcessorAsl(PreProcessor):
-    def __init__(self, descriptor: Descriptor, segmenter: Segmenter, img_size=(60, 60)):
+    def __init__(self, descriptor: Descriptor = HistogramOfGradients(), segmenter: Segmenter = MRFAsl(),
+                 img_size=(60, 60)):
         self.img_size = img_size
         self.descriptor = descriptor
         self.segmenter = segmenter
@@ -16,8 +19,11 @@ class PreProcessorAsl(PreProcessor):
         return self.descriptor.get_descr(img)
 
     def preprocess(self, img):
-        img_segment = self.segmenter.get_label(img)
+        label_map = self.segmenter.get_label(img)
 
-        img_segment = cv2.cvtColor(img_segment, cv2.COLOR_RGB2GRAY)
-        img_segment = cv2.resize(img_segment, self.img_size)
-        return cv2.equalizeHist(img_segment)
+        img_extracted = img[0].copy()
+        img_extracted[label_map == 0] = 0
+
+        img_extracted = cv2.cvtColor(img_extracted, cv2.COLOR_RGB2GRAY)
+        img_extracted = cv2.resize(img_extracted, self.img_size)
+        return cv2.equalizeHist(img_extracted)

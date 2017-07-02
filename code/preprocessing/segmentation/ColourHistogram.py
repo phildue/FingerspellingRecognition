@@ -14,11 +14,11 @@ class ColourHistogram(Segmenter):
 
         self.img = img
 
-    def get_label_soft(self):
+    def get_label_soft(self, img):
         return np.exp(-kl_divergence(self.skinhist, colour_hist(img)) / self.sigma)
 
-    def get_label(self):
-        soft_label = self.get_label_soft()
+    def get_label(self, img):
+        soft_label = self.get_label_soft(img)
         soft_label[soft_label >= 0.5] = 1.0
         soft_label[soft_label < 0.5] = 0.0
 

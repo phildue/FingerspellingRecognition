@@ -3,10 +3,11 @@ from math import floor
 import cv2
 import imutils
 
-from app.BackgroundSubtractor import BackgroundSubtractor
-from app.EstimatorVideo import EstimatorVideo
-from app.PreprocessorVideo import PreprocessorVideo
-from app.SegmenterVideo import SegmenterVideo
+from classification.EstimatorVideo import EstimatorVideo
+from preprocessing.PreProcessorVideo import PreProcessorVideo
+from preprocessing.representation.HistogramOfGradients import HistogramOfGradients
+from preprocessing.segmentation.BackgroundSubtractor import BackgroundSubtractor
+from preprocessing.segmentation.MRFVideo import MRFVideo
 
 camera = cv2.VideoCapture(0)
 # keep looping, until interrupted
@@ -18,7 +19,7 @@ roi_right = 0
 roi_top = 0
 roi_bottom = 0
 
-preprocessor = PreprocessorVideo(BackgroundSubtractor(0.5), SegmenterVideo())
+preprocessor = PreProcessorVideo(BackgroundSubtractor(0.5), segmenter=MRFVideo(), descriptor=HistogramOfGradients())
 estimator = EstimatorVideo("../../resource/models/model_hog_asl.pkl")
 num_frames = 0
 while keypress != ord("q"):
@@ -56,7 +57,7 @@ while keypress != ord("q"):
         pp = preprocessor.preprocess(roi)
         cv2.imshow("preprocessed", pp)
         cv2.waitKey(0)
-        estimator.stack_descr(preprocessor.extract_descriptor(pp))
+        estimator.stack_descr(preprocessor.get_descr(pp))
         print(str(estimator.predict()))
 
     cv2.imshow("Video Feed", clone)

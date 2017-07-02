@@ -1,10 +1,13 @@
-from sklearn.externals import joblib
+from daq.DatasetGenerator import DatasetGenerator
+from daq.FileProviderAsl import FileProviderAsl
+from preprocessing.PreProcessorAsl import PreProcessorAsl
+from preprocessing.representation.HistogramOfGradients import HistogramOfGradients
+from preprocessing.segmentation.MRFAsl import MRFAsl
 
-from daq.fileaccess import get_paths_asl
-from daq.gendata import gendata_sign
+g = DatasetGenerator(file_provider=FileProviderAsl("../../resource/dataset/fingerspelling5/dataset5/"),
+                     preprocessor=PreProcessorAsl(segmenter=MRFAsl(),
+                                                  descriptor=HistogramOfGradients(window_size=6, n_bins=8)))
 
-n_data = 2500
-data, labels = gendata_sign(get_paths_asl("../../resource/dataset/fingerspelling5/dataset5/"), n_data)
+data, labels = g.gendata_sign(sample_size=2500)
 
-joblib.dump(data, '../../resource/models/descriptors_hog.pkl')
-joblib.dump(labels, '../../resource/models/labels.pkl')
+g.save_data(data, labels, '../../resource/models/', 'hog')

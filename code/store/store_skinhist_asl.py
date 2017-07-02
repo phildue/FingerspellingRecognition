@@ -3,10 +3,10 @@ import numpy as np
 from numpy.linalg import norm
 from numpy.ma import floor
 
-from daq.fileaccess import get_paths_asl, read_image
+from daq.FileProviderAsl import FileProviderAsl
 from preprocessing.segmentation.ColourHistogram import ColourHistogram
 
-paths_dict = get_paths_asl(sets=["E"], alphabet=["a"])
+paths_dict = FileProviderAsl(sets=["E"], alphabet=["a"]).img_file_paths
 winsize = 3
 samples = []
 for paths in paths_dict.values():

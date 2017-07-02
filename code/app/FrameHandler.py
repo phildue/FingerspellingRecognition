@@ -1,11 +1,9 @@
 import threading
 from multiprocessing import Queue
 
-import cv2
-
-from app.EstimatorVideo import EstimatorVideo
 from app.PreprocessorVideo import PreprocessorVideo
-from preprocessing.preprocessing_asl import extract_descriptor
+
+from classification.EstimatorVideo import EstimatorVideo
 
 
 class FrameHandler(threading.Thread):

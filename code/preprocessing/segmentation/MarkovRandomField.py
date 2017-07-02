@@ -9,12 +9,37 @@ from preprocessing.segmentation.Segmenter import Segmenter
 
 class MarkovRandomField(Segmenter):
     @abstractmethod
-    def get_label(self):
+    def get_label(self, img):
         pass
 
-    @abstractmethod
-    def get_soft_labelling(self):
-        pass
+    def get_label_soft(self, img):
+        print("Warning! MarkovRandomField doesnt provides soft labels! ")
+        self.get_label(img)
+
+    @staticmethod
+    def maxflow(graph, nodeids):
+        graph.maxflow()
+
+        sgm = graph.get_grid_segments(nodeids)
+        return np.int_(np.logical_not(sgm))
+
+    @staticmethod
+    def create_graph(shape, weight_x, weight_y, likelihood_object, likelihood_backgr):
+        g = mf.Graph[int]()
+
+        nodeids = g.add_grid_nodes(shape)
+
+        g.add_grid_edges(nodeids, weight_y, structure=np.array([0, 1, 0,
+                                                                0, 0, 0,
+                                                                0, 1, 0]))
+
+        g.add_grid_edges(nodeids, weight_x, structure=np.array([0, 0, 0,
+                                                                1, 0, 1,
+                                                                0, 0, 0]))
+
+        g.add_grid_tedges(nodeids, likelihood_object, likelihood_backgr)
+
+        return g, nodeids
 
     def get_smooth_grid(self, img):
         img_gray = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)

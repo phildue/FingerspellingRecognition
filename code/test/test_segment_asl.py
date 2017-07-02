@@ -1,15 +1,15 @@
 import cv2
 
-from daq.fileaccess import read_image, read_image_depth
-from preprocessing.segmentation import segment_asl
+from daq.FileProviderAsl import FileProviderAsl
+from preprocessing.segmentation.MRFAsl import MRFAsl
 
 example_image_file = "../../resource/dataset/fingerspelling5/dataset5/A/a/color_0_0026.png"
-img = read_image(example_image_file)
+img = FileProviderAsl.read_img(example_image_file)
 
-img_depth = read_image_depth(example_image_file)
+img_depth = img[1]
 cv2.imshow('image', img)
 
-segmented = segment_asl(img, img_depth)
+segmented = MRFAsl().get_label(img)
 
 cv2.imshow('Segmented', segmented)
 

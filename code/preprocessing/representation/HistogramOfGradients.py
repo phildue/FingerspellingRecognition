@@ -5,7 +5,7 @@ from preprocessing.representation.Descriptor import Descriptor
 
 
 class HistogramOfGradients(Descriptor):
-    def __init__(self, window_size, n_bins):
+    def __init__(self, window_size=6, n_bins=8):
         self.window_size = window_size
         self.n_bins = n_bins
 

@@ -16,22 +16,9 @@ class BackgroundSubtractor:
         # compute weighted average, accumulate it and update the background
         cv2.accumulateWeighted(image_blur, self.background, self.alpha)
 
-    def get_foreground(self, image):
-        # find the absolute difference between background and current frame
-        diff = cv2.absdiff(self.background.astype("uint8"), image)
+    def get_diff(self, image):
+        gray = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
+        return cv2.absdiff(self.background.astype("uint8"), gray)
 
-        # detect edges in the image
-        edges = cv2.Canny(diff, threshold1=20, threshold2=80)
-
-        # get the contours in the thresholded image
-        (_, contours, _) = cv2.findContours(edges.copy(),
-                                            cv2.RETR_LIST,
-                                            cv2.CHAIN_APPROX_SIMPLE)
-
-        # return None, if no contours detected
-        if len(contours) == 0:
-            return
-        else:
-            # based on contour area, get the maximum contour which is the hand
-            segmented = max(contours, key=cv2.contourArea)
-            return edges, segmented
+    def get_background(self):
+        return self.background

@@ -18,5 +18,5 @@ class PreProcessorVideo(PreProcessorAsl):
         self.background_subtractor.run_avg(frame)
 
     def calibrate_object(self, frame):
-        self.segmenter.train(self.background_subtractor.background, frame)
+        self.segmenter.train(self.background_subtractor.get_background(), frame)
         self.calibrated = True

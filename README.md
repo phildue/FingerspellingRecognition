@@ -7,7 +7,11 @@
 - [opencv2](http://www.pyimagesearch.com/2016/10/24/ubuntu-16-04-how-to-install-opencv)
 
 ####Runnables
-- *app.main* runs the web cam application. Instructions are displayed via terminal.
+- *app.main* runs the web cam application. Optimal conditions are:
+    - light source from behind the camera
+    - no other moving object/ object with skin colour inside the green box
+    - when ready to calibrate move your hand slowly in the box and press "c"
+    
 - *evaluation.plots.cthresh_asl* shows example for colour threshold segmentation on ASL-set
 - *evaluation.plots.cthresh_tm* shows example for colour threshold segmentation on TM-set
 - *evaluation.plots.mrf_asl* shows example for Markov Random Field segmentation on ASL-set

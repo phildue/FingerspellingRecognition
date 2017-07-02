@@ -13,7 +13,7 @@ class FrameHandler(threading.Thread):
     s_letter = threading.Lock()
     detected_letter = None
 
-    def __init__(self, preprocessor=PreProcessorVideo(), estimator=EstimatorVideo()):
+    def __init__(self, preprocessor: PreProcessorVideo, estimator: EstimatorVideo):
         threading.Thread.__init__(self)
         self.preprocessor = preprocessor
         self.estimator = estimator

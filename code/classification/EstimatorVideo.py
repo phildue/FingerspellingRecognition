@@ -8,7 +8,7 @@ class EstimatorVideo:
     iterations = 0
     n_letters = 24
 
-    def __init__(self, model_path='../../resource/models/model_tm.pkl'):
+    def __init__(self, model_path):
         self.model = joblib.load(model_path)
         self.trained = True
         self.votes = np.zeros(shape=self.n_letters)

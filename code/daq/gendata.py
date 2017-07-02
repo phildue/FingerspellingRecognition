@@ -1,5 +1,3 @@
-import random
-
 import numpy as np
 from sklearn.externals import joblib
 
@@ -7,7 +5,7 @@ from daq.fileaccess import read_letters
 from preprocessing.preprocessing_asl import preprocesss, extract_descriptors
 
 
-def load_data_sign(sample_file_path, label_file_path, sample_size=2500):
+def load_data_sign(sample_file_path, label_file_path):
     data = joblib.load(sample_file_path)
     labels = joblib.load(label_file_path)
 

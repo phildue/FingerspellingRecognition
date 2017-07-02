@@ -21,7 +21,7 @@ class BagOfHogs(Descriptor):
     @staticmethod
     def get_codebook_dist(hog, codebook, bandwidth=10000):
         dist = np.exp(-cdist(hog, codebook) / bandwidth)
-        return np.min(dist, axis=0)
+        return np.max(dist, axis=0)
 
     def get_descr(self, img):
         return self.get_codebook_dist(HistogramOfGradients(self.winsize, self.n_bins).get_descr(img), self.codebook)

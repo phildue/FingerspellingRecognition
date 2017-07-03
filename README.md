@@ -11,7 +11,8 @@ down need to be downloaded.
 ####Required packages
 - python3 with numpy, sklearn, [PyMaxFlow](https://github.com/pmneila/PyMaxflow)
 - [opencv2](http://www.pyimagesearch.com/2016/10/24/ubuntu-16-04-how-to-install-opencv "How to install opencv on ubuntu")
-
+- The trained model file needs to be downloaded from [here](https://web.tresorit.com/l#1mdakhlBTLofovtlOopQBA)
+- Ideally its stored at [resource/models/model_hog_asl.pkl](resource/)
 ####Runnables
 - [app.main](code/app/main.py) runs the web cam application. Optimal conditions are:
     - light source from behind the camera

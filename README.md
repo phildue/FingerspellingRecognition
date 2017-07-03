@@ -36,5 +36,4 @@ down need to be downloaded.
 
 [Fingerspelling Dataset - Thomas Moeslund](http://www-prima.inrialpes.fr/FGnet/data/12-MoeslundGesture/database.html)
 
-### Other
-[Overleaf-Report](https://www.overleaf.com/8743838fnnjtvrxbqth#/31192954/)
+[Report](doc/sign-language-recognition.pdf)
